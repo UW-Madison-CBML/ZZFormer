@@ -1,0 +1,25 @@
+Universe   = container
+container_image = docker://lsvaren/transformers
+Executable = run_hier.sh
+
+
+transfer_input_files = MnTEdb,train_hier.py,train_new.py
+
++WantGPULab = true
++WantFlock = true
+#+GPUJobLength = "long"
+#Requirements = (Target.HasCHTCStaging == true)
+Requirements = (Machine == "bhaskargpu4000.chtc.wisc.edu")
+gpus_minimum_memory = 30 GB
+request_memory = 40 GB
+#retry_request_memory = RequestMemory*2
+request_disk = 100 GB
+request_cpus = 1
+request_gpus = 1
+
+batch_name = MnTEdb
+output = MnTEdb.out
+error  = MnTEdb.err
+log    = MnTEdb.log
+
+queue 1
