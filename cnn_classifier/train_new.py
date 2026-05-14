@@ -59,24 +59,6 @@ class PersistenceDataset(Dataset):
         # return x4, x8, x14, seq_x, label_id, label, dataset
         return x4, x8, x14, x20, seq_x, label_id, label, dataset
 
-# class Encoder(nn.Module):
-#     def __init__(
-#             self, 
-#             n_channels=5,
-#             n_filters=16,):
-#         super(Encoder, self).__init__()
-#         self.encoder = nn.Sequential(
-#             nn.Conv2d(n_channels, n_filters, kernel_size=3, padding=1), 
-#             nn.ReLU(),
-#             nn.MaxPool2d(2),        # Output: [16, 64, 64]
-#             nn.Conv2d(n_filters, n_filters//2, kernel_size=3, padding=1), 
-#             nn.ReLU(),
-#             nn.MaxPool2d(2),        # Output: [8, 32, 32]
-#             nn.Flatten()            # Output: [8192]
-#         )
-#     def forward(self, x):
-#         return self.encoder(x)
-
 class Encoder(nn.Module):
     def __init__(self, n_channels=5, n_filters=16):
         super(Encoder, self).__init__()
