@@ -25,26 +25,29 @@ def get_nuc_counts(nodes):
 def set_atgcx_5(all_node_counts_list):
     rgb_atgcx = []
     for data in all_node_counts_list:
-        a_val = data.get('a', 0)
-        t_val = data.get('t', 0)
-        g_val = data.get('g', 0)
-        c_val = data.get('c', 0)
-        x_val = data.get('x', 0)
+        if len(data) > 0:
+            a_val = data.get('a', 0)
+            t_val = data.get('t', 0)
+            g_val = data.get('g', 0)
+            c_val = data.get('c', 0)
+            x_val = data.get('x', 0)
 
-        total = sum(data.values())
-        a = (a_val / total) #* 255
-        t = (t_val / total) #* 255
-        g = (g_val / total) #* 255
-        c = (c_val / total) #* 255
-        x = (x_val / total) #* 255
+            total = sum(data.values())
+            a = (a_val / total) #* 255
+            t = (t_val / total) #* 255
+            g = (g_val / total) #* 255
+            c = (c_val / total) #* 255
+            x = (x_val / total) #* 255
 
-        rgb_atgcx.append((a,t,g,c,x))
-        
+            rgb_atgcx.append((a,t,g,c,x))
+        else:
+            rgb_atgcx.append((0,0,0,0,0))
     return rgb_atgcx
 
 def set_counts(all_node_counts_list):
     rgb_atgcx = []
     for data in all_node_counts_list:
+        
         a_val = data.get('a', 0)
         t_val = data.get('t', 0)
         g_val = data.get('g', 0)
@@ -69,6 +72,7 @@ def get_alphabet(a:list, k:int):
 
     return sorted_combos, node_id
 
+
 def process_barcodes(obj):
     all_barcodes = []
     labels = []
@@ -76,17 +80,10 @@ def process_barcodes(obj):
     all_node_counts = []
     for seq, value in obj.items():
         l = len(seq)
-        node_id = value[0]['node_id']
-        id_to_node = {v:k for k,v in node_id.items()}
         for k, bd in value[0].items():
-            
-            nodes = [tuple(id_to_node[num] for num in t) for t in bd[0]]
-            all_nodes.append(nodes)
 
-            node_counts = get_nuc_counts(nodes)
-            all_node_counts.append(node_counts)
-            
             if len(bd[-1]) == 0:
+                b_d_times = []
                 continue
             else:
                 b_d_times = []
@@ -95,7 +92,12 @@ def process_barcodes(obj):
                         death = l
                     b_d_times.append([int(birth), int(death)-int(birth)]) # Calculate persistence
                 labels.append(seq)
-        all_barcodes.append(np.array(b_d_times))
+                all_barcodes.append(np.array(b_d_times))
+            nodes = [tuple(id_to_node[num] for num in t) for t in bd[0]]
+            all_nodes.append(nodes)
+
+            node_counts = get_nuc_counts(nodes)
+            all_node_counts.append(node_counts)
 
     return all_nodes, all_node_counts, all_barcodes, labels
 
@@ -216,10 +218,11 @@ with tarfile.open(f"{path}/{filename}", "r:gz") as tar:
                             if death == np.inf:
                                 death = l
                             b_d_times.append([int(birth), int(death)-int(birth)]) # Calculate persistence
-                    
-                    labels.append(seq)
-                    all_barcodes.append(np.array(b_d_times))
-                    all_data.append(node_counts)
+                            
+                    if len(b_d_times) > 0:
+                        labels.append(seq)
+                        all_barcodes.append(np.array(b_d_times))
+                        all_data.append(node_counts)
 
 rgb_atgcx = set_atgcx_5(all_data)
 atgcx = set_counts(all_data)
