@@ -1,0 +1,346 @@
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+from pprint import pprint 
+import math
+
+
+DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+print(DEVICE)
+
+# Baselines
+
+
+
+class PositionalEncoding(nn.Module):
+    """
+    Standard PyTorch Positional Encoding module.
+    Adapted for batch_first=True (B, L, D).
+    """
+    def __init__(self, d_model, dropout=0.1, max_len=5000):
+        super(PositionalEncoding, self).__init__()
+        self.dropout = nn.Dropout(p=dropout)
+
+        pe = torch.zeros(max_len, d_model)
+        position = torch.arange(0, max_len, dtype=torch.float).unsqueeze(1)
+        div_term = torch.exp(torch.arange(0, d_model, 2).float() * (-math.log(10000.0) / d_model))
+        pe[:, 0::2] = torch.sin(position * div_term)
+        pe[:, 1::2] = torch.cos(position * div_term)
+        
+        # Reshape for batch_first=True: (1, max_len, d_model)
+        pe = pe.unsqueeze(0)
+        self.register_buffer('pe', pe)
+
+    def forward(self, x):
+        # x shape: (Batch, Seq_Len, d_model)
+        x = x + self.pe[:, :x.size(1), :]
+        return self.dropout(x)
+
+
+
+class BaselineTransformer_Vanilla_MLM(nn.Module):
+    """
+    Simple baseline: Embedding → num_layers number of Transformer Encoder Blocks → Sequence Alphabet Classifier.
+    No k-mers, no topology, no pooling/unpooling, no classification, only sequence reconstruction.
+    """
+    def __init__(self, src_vocab_size, d_model=256, n_heads=8, num_layers=8,
+                 dim_feedforward=1024, dropout=0.1,
+                 positional_encoding="sinusoidal", max_position_embeddings=512,
+                 pad_token_id=0, ignore_index=None):
+        super().__init__()
+        self.input_vocab_size = src_vocab_size + 1
+        self.output_vocab_size = src_vocab_size
+
+        self.positional_encoding=positional_encoding 
+        self.dropout=dropout
+        self.d_model = d_model
+        
+        self.pad_token_id = pad_token_id
+        self.ignore_index = -100 if ignore_index is None else ignore_index
+        
+        # ---- 1. Embedding & Positional Encoding ----
+        self.src_embed = nn.Embedding(self.input_vocab_size, d_model)
+        self.pos_encoder = PositionalEncoding(d_model, self.dropout, max_len=max_position_embeddings)
+        
+
+        # ---- 2. Transformer Encoder Blocks ----
+        self.encoder_layers = nn.ModuleList([
+            nn.TransformerEncoderLayer(
+                d_model=d_model,
+                nhead=n_heads,
+                dim_feedforward=dim_feedforward,
+                dropout=self.dropout,
+                norm_first=True,
+                batch_first=True,
+            )
+            for _ in range(num_layers)
+        ])
+
+
+        # Safe weight initialization - this was wrong and was removed
+        # ---- 3. Output Head ----
+        self.sequence_head = nn.Linear(d_model, self.output_vocab_size)
+        
+        # WEIGHT TYING: Point the output linear layer's weights to the embedding weights
+        # self.sequence_head.weight = self.src_embed.weight
+        self.init_weights()
+
+    def init_weights(self):
+        initrange = 0.1
+
+        # ---- Embedding ----
+        nn.init.uniform_(self.src_embed.weight, -initrange, initrange)
+
+        # ---- Output head (only if NOT weight tying) ----
+        # If you later do: self.sequence_head.weight = self.src_embed.weight
+        # then DO NOT separately init sequence_head.weight here.
+        nn.init.zeros_(self.sequence_head.bias)
+        nn.init.uniform_(self.sequence_head.weight, -initrange, initrange)
+
+        # ---- Transformer encoder ----
+        # Re-init each cloned layer's Linear/LayerNorm so layers don't start identical.
+        def _init_encoder(m):
+            if isinstance(m, nn.Linear):
+                nn.init.xavier_uniform_(m.weight)
+                if m.bias is not None:
+                    nn.init.zeros_(m.bias)
+            elif isinstance(m, nn.LayerNorm):
+                # standard LayerNorm init
+                if m.weight is not None:
+                    nn.init.ones_(m.weight)
+                if m.bias is not None:
+                    nn.init.zeros_(m.bias)
+
+        for layer in self.encoder_layers:
+            layer.apply(_init_encoder)
+
+
+    def forward(self, tokens,src_key_padding_mask,mlm_labels):
+        """
+        tokens: (B, L) — may contain MASK_TOKEN_ID
+        mlm_labels: (B, L) with -100 for non-masked (ignored) positions
+        """
+
+        B, seq_len = tokens.shape
+        
+        # ---- Embedding + Positional Encoding ----
+        h = self.src_embed(tokens) * math.sqrt(self.d_model)
+        h = self.pos_encoder(h)
+
+
+        for layer in self.encoder_layers:
+            h = layer(h, src_key_padding_mask=src_key_padding_mask)
+
+        mlm_loss = None
+        logits = self.sequence_head(h)  # (B,L,V)
+
+        if mlm_labels is not None:
+            # flatten to (B*L, V), (B*L,)
+            logits_flat = logits.view(-1, self.output_vocab_size)
+            labels_flat = mlm_labels.view(-1)
+
+            # compute loss only on masked positions
+            mlm_loss = F.cross_entropy(
+                logits_flat,
+                labels_flat,
+                ignore_index=self.ignore_index,  # ignore non-mask positions
+                reduction="mean"
+            )
+
+        return mlm_loss,logits
+    def get_latent_embeddings(self, batch):
+        """
+        Passes tokens through the encoder and computes a mean-pooled 
+        representation across the sequence, ignoring PAD tokens.
+        """
+        tokens = batch['tokens']
+        src_key_padding_mask = batch.get('src_key_padding_mask', None)
+        
+        # 1. Embeddings
+        h = self.src_embed(tokens) * math.sqrt(self.d_model)
+
+        h = self.pos_encoder(h)
+
+        for layer in self.encoder_layers:
+            h = layer(h, src_key_padding_mask=src_key_padding_mask)
+
+                
+        # 3. Mean Pooling (Ignore padding tokens)
+        if src_key_padding_mask is not None:
+            valid_mask = (~src_key_padding_mask).unsqueeze(-1).float()  # (B, L, 1)
+        else:
+            valid_mask = torch.ones(h.size(0), h.size(1), 1, device=h.device, dtype=h.dtype)
+            
+        sum_embeddings = torch.sum(h * valid_mask, dim=1)
+        sum_mask = torch.clamp(valid_mask.sum(dim=1), min=1e-9) # Avoid division by zero
+        mean_pooled = sum_embeddings / sum_mask
+        
+        return mean_pooled
+
+
+
+
+class BertMLMHead(nn.Module):
+    """
+    Standard BERT-style Masked Language Modeling Head.
+    Includes a dense layer, GELU activation, LayerNorm, and the final vocabulary projection.
+    """
+    def __init__(self, d_model, vocab_size):
+        super().__init__()
+        self.dense = nn.Linear(d_model, d_model)
+        self.activation = nn.GELU()
+        self.layer_norm = nn.LayerNorm(d_model)
+        self.decoder = nn.Linear(d_model, vocab_size)
+
+    def forward(self, hidden_states):
+        x = self.dense(hidden_states)
+        x = self.activation(x)
+        x = self.layer_norm(x)
+        logits = self.decoder(x)
+        return logits
+
+
+class BaselineTransformer_BERTSTyle_MLM(nn.Module):
+    """
+    Simple baseline: Embedding → 3 Transformer Encoder Layers → BERT MLM Head.
+    """
+    def __init__(self, src_vocab_size, d_model=256, n_heads=8, num_layers=3, # <-- Added num_layers
+                 dim_feedforward=1024, dropout=0.1,
+                 positional_encoding="sinusoidal", max_position_embeddings=512,
+                 pad_token_id=0, ignore_index=-100):
+        super().__init__()
+        self.src_vocab_size = src_vocab_size + 1  # +1 for MASK token
+        self.d_model = d_model
+        self.positional_encoding_type = positional_encoding
+        self.pad_token_id = pad_token_id
+        self.ignore_index = ignore_index
+        
+        # ---- Embedding ----
+        self.src_embed = nn.Embedding(self.src_vocab_size, d_model)
+        
+        if positional_encoding == "learned":
+            self.pos_embed = nn.Embedding(max_position_embeddings, d_model)
+        else:
+            self.register_buffer(
+                "pos_enc",
+                self._create_sinusoidal_positions(max_position_embeddings, d_model),
+                persistent=False
+            )
+            self.pos_embed = None
+        
+        self.dropout = nn.Dropout(dropout)
+        
+        # ---- 3 Encoder Layers ----
+        # 1. Define the single layer architecture
+        encoder_layer = nn.TransformerEncoderLayer(
+            d_model=d_model,
+            nhead=n_heads,
+            dim_feedforward=dim_feedforward,
+            dropout=dropout,
+            norm_first=True,
+            batch_first=True,
+        )
+        
+        # 2. Stack it num_layers times (e.g., 3)
+        self.transformer_encoder = nn.TransformerEncoder(
+            encoder_layer, 
+            num_layers=num_layers
+        )
+
+        # ---- BERT-style Sequence Head ----
+        self.sequence_head = BertMLMHead(d_model, self.src_vocab_size)
+        
+        # Weight Tying (Optional but recommended for BERT)
+        self.sequence_head.decoder.weight = self.src_embed.weight
+
+    def _create_sinusoidal_positions(self, num_positions, dim):
+        position = torch.arange(0, num_positions, dtype=torch.float).unsqueeze(1)
+        div_term = torch.exp(torch.arange(0, dim, 2, dtype=torch.float) * (-math.log(10000.0) / dim))
+        pe = torch.zeros(num_positions, dim)
+        pe[:, 0::2] = torch.sin(position * div_term)
+        pe[:, 1::2] = torch.cos(position * div_term)
+        return pe
+
+    def forward(self, batch):
+        """
+        batch expects:
+            'tokens': (B, L)
+            'src_key_padding_mask': (B, L) boolean tensor (True for padding)
+            'mlm_labels': (B, L) with -100 for non-masked positions
+        """
+        tokens = batch['tokens']
+        src_key_padding_mask = batch.get('src_key_padding_mask', None)
+        mlm_labels = batch.get('mlm_labels', None)
+        B, seq_len = tokens.shape
+        
+        # ---- Embedding + Positional Encoding ----
+        h = self.src_embed(tokens)
+        
+        if self.positional_encoding_type == "learned":
+            pos_indices = torch.arange(0, seq_len, device=tokens.device).unsqueeze(0).expand(B, seq_len)
+            h = h + self.pos_embed(pos_indices)
+        else:
+            h = h + self.pos_enc[:seq_len, :].unsqueeze(0)
+        
+        h = self.dropout(h)
+
+        # ---- 3 Transformer Layers ----
+        # Pass the hidden states through the stacked encoder
+        h = self.transformer_encoder(h, src_key_padding_mask=src_key_padding_mask)
+
+        # ---- MLM Prediction ----
+        logits = self.sequence_head(h)  # (B, L, V)
+        mlm_loss = None
+
+        if mlm_labels is not None:
+            # Flatten to (B*L, V) and (B*L,)
+            logits_flat = logits.view(-1, self.src_vocab_size)
+            labels_flat = mlm_labels.view(-1)
+
+            # Compute loss only on masked positions using ignore_index
+            mlm_loss = F.cross_entropy(
+                logits_flat,
+                labels_flat,
+                ignore_index=self.ignore_index,
+                reduction="mean"
+            )
+
+        return mlm_loss, logits
+    def get_latent_embeddings(self, batch):
+        """
+        Passes tokens through the encoder and computes a mean-pooled 
+        representation across the sequence, ignoring PAD tokens.
+        """
+        tokens = batch['tokens']
+        src_key_padding_mask = batch.get('src_key_padding_mask', None)
+        
+        # 1. Embeddings
+        h = self.src_embed(tokens)
+        B, seq_len = tokens.shape
+        if self.positional_encoding_type == "learned":
+            pos_indices = torch.arange(0, seq_len, device=tokens.device).unsqueeze(0).expand(B, seq_len)
+            h = h + self.pos_embed(pos_indices)
+        else:
+            h = h + self.pos_enc[:seq_len, :].unsqueeze(0)
+        h = self.dropout(h)
+        
+        # 2. Transformer
+        if hasattr(self, 'transformer_encoder'):
+            h = self.transformer_encoder(h, src_key_padding_mask=src_key_padding_mask)
+        else:
+            # Fallback if using manual layer loop
+            for layer in getattr(self, 'layers', getattr(self, 'encoder_layer', [])):
+                h = layer(h, src_key_padding_mask=src_key_padding_mask)
+                
+        # 3. Mean Pooling (Ignore padding tokens)
+        if src_key_padding_mask is not None:
+            # src_key_padding_mask is True for padding. We want True for valid tokens.
+            valid_mask = (~src_key_padding_mask).unsqueeze(-1).float()
+        else:
+            valid_mask = torch.ones_like(h)
+            
+        sum_embeddings = torch.sum(h * valid_mask, dim=1)
+        sum_mask = torch.clamp(valid_mask.sum(dim=1), min=1e-9) # Avoid division by zero
+        mean_pooled = sum_embeddings / sum_mask
+        
+        return mean_pooled

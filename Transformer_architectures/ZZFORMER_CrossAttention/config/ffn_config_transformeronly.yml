@@ -1,0 +1,50 @@
+model_name: "pretrained_transformer_mlm_wFFN"
+
+train:
+  epochs: 200
+  batchsize: 512
+  accum_steps: 1
+  lr: 0.0001
+  dropout: 0.1
+  num_workers: 8
+  mlm_prob: 0.15
+
+
+model:
+  d_model: 256
+  vocab_size: 6
+  nhead: 4
+  num_layers: 4
+  max_seq_len: 1024
+  dim_feedforward: 1024
+  positional_encoding: "sinusoidal"
+  max_position_embeddings: 1024
+  pad_token_id: 0
+  mask_token_id: 6
+  ignore_index: -100
+  dropout: 0.1
+  classifier_hidden_dim: 64
+
+topology:
+  use_topology: True
+  topological_embedding_dim: 512
+  clip_weight: 0.1
+
+
+
+data:
+  dataset: "either_of_three"
+  task: "withFFN_andCrossAttention_pretrainedmlm"
+  mask_token_id: 6   
+  num_orders: 7           # Number of order classes
+  num_superfamilies: 24   # Number of superfamily classes
+
+dir:
+  save_dir: "/staging/kkumari/"
+  weights: "/staging/kkumari/"
+
+
+wandb:
+  project: "zzformer"
+  team: 'kkumari-university-of-wisconsin-madison'
+  dir: 'tmp/wandb/'
