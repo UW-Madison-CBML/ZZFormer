@@ -1,0 +1,41 @@
+model_name: "baseline_transformer_mlm"
+
+train:
+  epochs: 300
+  batchsize: 512
+  accum_steps: 1
+  lr: 0.0001
+  dropout: 0.1
+  num_workers: 32
+  mlm_prob: 0.15
+  min_delta: 1e-4
+  patience: 10
+
+
+model:
+  d_model: 256
+  vocab_size: 6
+  nhead: 2
+  num_layers: 4
+  max_seq_len: 1024
+  dim_feedforward: 1024
+  positional_encoding: "sinusoidal"
+  max_position_embeddings: 1024
+  pad_token_id: 0
+  mask_token_id: 6
+  ignore_index: -100
+  dropout: 0.1
+data:
+  dataset: "repbase"
+  task: "mlm"
+  mask_token_id: 5   # VOCAB_SIZE = 5 → MASK = 5
+
+dir:
+  save_dir: "/staging/kkumari/"
+  weights: "/staging/kkumari/"
+
+
+wandb:
+  project: "zzformer"
+  team: 'kkumari-university-of-wisconsin-madison'
+  dir: 'tmp/wandb/'
