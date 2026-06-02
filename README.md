@@ -4,10 +4,30 @@ ZFormer provides a general framework for incorporating zigzag topological struct
 
 # Usage
 
+### Environment
+
+
+### Zigzag homology computation
+
+Prepare all sequences in a text file, with one sequence per line. Run `preML.py` passing a string of alphabets, memory, k-mer size, and input text file name. The output will be a `pkl` file `results_{input_file}_{k}mer.pkl`
+
+```
+python preML.py "A,T,G,C,X" 100 4 "dna_preML.txt"
+
+# Output file: results_dna_preML_4mer.pkl
+```
+
+### Extract H1 apex representatives
+```
+
+
+```
+
+
 
 ### Train
 ```
-Test
+Edit
 ```
 
 ### Test
