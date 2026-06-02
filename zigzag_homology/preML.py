@@ -23,9 +23,20 @@ from collections import defaultdict
 import sys
 import json
 
-dataset = sys.argv[1]
 
-file = f'{dataset}.txt'
+# Alphabet
+a = sys.argv[1]
+a = a.split(',')
+
+# k-mer size
+k = int(sys.argv[2])
+
+# Memory
+memory = int(sys.argv[3])
+
+# Input file
+file = sys.argv[4] # input.txt
+dataset = file.replace('.txt', '')
 
 with open(file) as f:
     sequences = [line.strip() for line in f]
@@ -41,12 +52,7 @@ if count != 0:
 
 
 ############## Run zz homology ##############
-a = ['a', 'c', 't', 'g', 'x']
 l = 1
-
-k = 4
-memory = 100
-
 counter = 0
 all_results = defaultdict(list)
 
