@@ -29,7 +29,7 @@ python preML.py "A,T,G,C,X" 100 4 "dna_preML.txt"
 # Output file: results_dna_preML_4mer.pkl
 ```
 
-### Extract H1 apex representatives
+### Persistence image computation
 ```
 
 ```
