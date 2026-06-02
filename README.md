@@ -38,16 +38,18 @@ python preML.py "A,T,G,C,X" 100 4 "dna_preML.txt"
 
 ### Train
 ```
-Edit
+python train.py
 ```
 
 ### Test
 ```
-Test
+python test.py
 ```
 
-# Potential use case
-ZZFormer was tested with Repbase, RepetDB and MnTEdb on classifying transposable elements at the order and superfamily levels.
+### Inference
+```
+python inference.py
+```
 
 
 # Citation
