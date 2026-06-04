@@ -1,0 +1,33 @@
+model:
+  d_model: 256
+  nhead: 4
+  num_layers: 4
+  dim_feedforward: 1024
+  dropout: 0.1
+  max_seq_len: 1024
+  vocab_size: 9                 # PAD,a,c,g,t,x,BOS,EOS,MASK  ← MLM adds a [MASK] id
+  attention_window: 256         # must evenly divide max_seq_len
+  max_position_embeddings: 1026 # >= max_seq_len + 2
+  position_embedding_type: absolute
+
+mlm:
+  mask_prob: 0.15               # BERT default
+  # token IDs you do NOT want to be masked or used as replacements:
+  mask_ignore_token_ids: [5]    # 'x' (unknown). PAD/BOS/EOS are auto-handled.
+
+train:
+  batchsize: 8
+  num_workers: 4
+  lr: 1.0e-4                    # MLM-from-scratch LR is higher than fine-tuning LR
+  epochs: 300
+  warmup_steps: 1000
+  weight_decay: 0.01
+
+wandb:
+  team: kkumari-university-of-wisconsin-madison
+  project: ZZFORMER_Terrierlabeling
+  dir: /tmp/wandb
+
+
+dir:
+  save_dir: /staging/kkumari/terrsystem/longformer_runs/
