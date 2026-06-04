@@ -1,0 +1,34 @@
+model:
+  d_model: 256                 # → LongformerConfig.hidden_size
+  nhead: 2                     # → num_attention_heads (must divide d_model)
+  num_layers: 4                # → num_hidden_layers
+  dim_feedforward: 1024        # → intermediate_size
+  dropout: 0.1                 # → hidden_dropout_prob & attention_probs_dropout_prob
+  max_seq_len: 1024            # actual nucleotide tokens per sequence
+  vocab_size: 9                # PAD,a,c,g,t,x,BOS,EOS,MASK  (see vocab below)
+  # ── new for Longformer ──
+  attention_window: 256        # MUST evenly divide max_seq_len. Use 128 for 512, 256 for 1024, 512 for 2048.
+  max_position_embeddings: 1026  # MUST be >= max_seq_len + 2 (room for BOS/EOS)
+  position_embedding_type: absolute
+  global_attention_mode: bos    # one of: bos | bos_eos | none | all | stride:N
+  classifier_hidden_dim: 256       # width of the MLP head
+  pool: bos                        # "bos" (recommended) or "mean"
+
+# Optional, passed straight into the tree:
+label_smoothing: 0.0
+gamma: 0.0
+
+train:
+  batchsize: 512                 # Longformer is heavy — start small
+  num_workers: 16
+  lr: 0.0001                   # standard transformer fine-tuning LR
+  epochs: 300
+
+wandb:
+  team: kkumari-university-of-wisconsin-madison
+  project: ZZFORMER_Terrierlabeling
+  dir: /tmp/wandb
+
+
+dir:
+  save_dir: /staging/kkumari/terrsystem/longformer_hierar_wprtrn/
