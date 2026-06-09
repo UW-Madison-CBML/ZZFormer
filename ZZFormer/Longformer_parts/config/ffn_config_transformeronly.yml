@@ -1,0 +1,72 @@
+model_name: "pretrained_transformer_mlm_wFFN"
+
+train:
+  epochs: 200
+  batchsize: 512
+  accum_steps: 1
+  lr: 0.0001
+  dropout: 0.1
+  num_workers: 16
+  mlm_prob: 0.15
+  min_delta: 1e-4
+  patience: 10
+
+
+# NEW: defines the classification tree
+hierarchy:
+  LTR: [Pao, Gypsy, Copia, DIRS, Caulimovirus, ERV]
+  DNA: [Harbinger, CMC, P, hAT, TcMar, PiggyBac, Zator, MULE, Merlin, Kolobok, Maverick, Novosib, Zisupton, Crypton, Academ, IS3EU, Dada, Sola, Ginger]
+  LINE: [R1, I, CR1, L1, RTE, L2, Dong-R4, R2, Dualen, CRE, Tad1, Rex-Babar, Proto2, Proto1]
+  Satellite: []
+  RC: [Helitron]
+  SINE: [tRNA, 5S, 7SL, U]
+  Structural_RNA: []
+  PLE: []
+  Other: []
+
+
+# Optional: Corgi-style per-depth loss weighting
+phi: 1.0
+label_smoothing: 0.0
+gamma: 0.0
+
+
+
+model:
+  d_model: 256
+  vocab_size: 6
+  nhead: 2
+  num_layers: 4
+  max_seq_len: 1024
+  dim_feedforward: 1024
+  positional_encoding: "sinusoidal"
+  max_position_embeddings: 1024
+  pad_token_id: 0
+  mask_token_id: 6
+  ignore_index: -100
+  dropout: 0.1
+  classifier_hidden_dim: 64
+
+topology:
+  use_topology: True
+  topological_embedding_dim: 512
+  clip_weight: 0.1
+
+
+
+data:
+  dataset: "any"
+  task: "withFFN_pretrainedmlm"
+  mask_token_id: 6   
+  num_orders: 7           # Number of order classes
+  num_superfamilies: 24   # Number of superfamily classes
+
+dir:
+  save_dir: "/staging/kkumari/"
+  weights: "/staging/kkumari/"
+
+
+wandb:
+  project: "ZZFORMER_April26"
+  team: 'kkumari-university-of-wisconsin-madison'
+  dir: 'tmp/wandb/'
