@@ -1,0 +1,432 @@
+import os
+import tarfile
+import pickle
+import glob
+import io
+import sys
+
+os.environ["TORCHINDUCTOR_CACHE_DIR"] = "/tmp/torch_cache"
+os.environ["USER"] = "researcher"
+os.environ["LOGNAME"] = "researcher"
+
+from hierarchicalsoftmax import SoftmaxNode, HierarchicalSoftmaxLoss, HierarchicalSoftmaxLinear
+from hierarchicalsoftmax.inference import (
+    greedy_predictions,
+    node_probabilities,
+)
+
+import numpy as np
+from collections import defaultdict, Counter
+import itertools
+import pandas as pd
+
+# import dionysus
+
+import torch
+import torch.nn as nn
+from torch.utils.data import Dataset, DataLoader
+import torch.optim as optim
+
+from sklearn.model_selection import StratifiedKFold
+#import wandb
+
+class PersistenceDataset(Dataset):
+    def __init__(self, data_dict, datasets):
+        self.x4 = data_dict[datasets[0]]
+        self.x8 = data_dict[datasets[1]]
+        self.x14 = data_dict[datasets[2]]
+        self.x20 = data_dict[datasets[3]]
+        self.label = data_dict['Label']
+        self.label_id = data_dict['label_id']
+        self.seq_x = data_dict['seq_x']
+        self.dataset = data_dict['dataset']
+    def __len__(self):
+        return len(self.x4)
+    def __getitem__(self, idx):
+        # Adjust input size to [Batch, 5, 128, 128]
+        x4 = torch.tensor(self.x4[idx], dtype=torch.float32)
+        x4 = x4.permute(2,0,1)
+        x8 = torch.tensor(self.x8[idx], dtype=torch.float32)
+        x8 = x8.permute(2,0,1)
+        x14 = torch.tensor(self.x14[idx], dtype=torch.float32)
+        x14 = x14.permute(2,0,1)
+        x20 = torch.tensor(self.x20[idx], dtype=torch.float32)
+        x20 = x20.permute(2,0,1)
+        # Labels (assuming they are already numerical or encoded)
+        seq_x = self.seq_x[idx]
+        label = self.label[idx]
+        label_id = self.label_id[idx]
+        dataset = self.dataset[idx]
+        # return x4, x8, x14, seq_x, label_id, label, dataset
+        return x4, x8, x14, x20, seq_x, label_id, label, dataset
+
+class Encoder(nn.Module):
+    def __init__(self, n_channels=5, n_filters=16):
+        super(Encoder, self).__init__()
+        self.encoder = nn.Sequential(
+            # Input dimension to 64x64
+            nn.Conv2d(n_channels, n_filters, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(2),
+            # 64x64 to 32x32
+            nn.Conv2d(n_filters, n_filters*2, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(2),
+            # 32x32 to 16x16
+            nn.Conv2d(n_filters*2, n_filters*4, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(2),
+
+            # Dense layers to reduce dimensionality
+            nn.Flatten(),
+
+            nn.Linear(16384, 4096),
+            nn.ReLU(),
+
+            nn.Linear(4096, 2048),
+            nn.ReLU(),
+
+            nn.Linear(2048, 1024),
+            nn.ReLU(),
+
+            nn.Linear(1024, 512),
+        )
+    def forward(self, x):
+        return self.encoder(x)
+
+
+class HierarchicalCNN(nn.Module):
+    def __init__(self, root_node, n_channels=5, n_filters=16):
+        super(HierarchicalCNN, self).__init__()
+        self.enc4 = Encoder(n_channels=n_channels, n_filters=n_filters)
+        self.enc8 = Encoder(n_channels=n_channels, n_filters=n_filters)
+        self.enc14 = Encoder(n_channels=n_channels, n_filters=n_filters)
+        self.enc20 = Encoder(n_channels=n_channels, n_filters=n_filters)
+        # self.pool = nn.AdaptiveAvgPool2d((1, 1)) 
+        # self.flatten = nn.Flatten()              
+        combined_size = (n_filters * 32) * 4
+        self.prediction_head = nn.Sequential(
+            nn.Linear(combined_size, 512), 
+            nn.ReLU(),
+            nn.Linear(512, 512),
+            nn.ReLU(),
+        )
+        self.hierarchical_layer = HierarchicalSoftmaxLinear(
+            in_features=512,
+            root=root_node
+        )
+    def forward(self, x4, x8, x14, x20):
+        # Encoder: (B, 64,16,16)
+        z4 = self.enc4(x4)
+        z8 = self.enc8(x8)
+        z14 = self.enc14(x14)
+        z20 = self.enc20(x20)
+
+        # Concatenate along channel
+        emb = torch.cat((z4, z8, z14, z20), dim=1)
+
+        # Prediction
+        classification = self.prediction_head(emb)
+        return self.hierarchical_layer(classification), emb
+
+
+def build_classification_tree(
+    order_to_superfamilies: dict,
+    label_smoothing: float = 0.0,
+    gamma: float = 0.0,
+) -> SoftmaxNode:
+    """
+    Builds a 2-level hierarchical softmax tree.
+    """
+    root = SoftmaxNode(
+        "root",
+        label_smoothing=label_smoothing,
+        gamma=gamma,
+    )
+    for order_name, superfamily_list in order_to_superfamilies.items():
+        order_node = SoftmaxNode(
+            order_name,
+            parent=root,
+            label_smoothing=label_smoothing,
+            gamma=gamma,
+        )
+        for sf_name in superfamily_list:
+            SoftmaxNode(
+                sf_name,
+                parent=order_node,
+                label_smoothing=label_smoothing,
+                gamma=gamma,
+            )
+    root.set_indexes()
+    return root
+
+def build_label_to_node_id(root: SoftmaxNode) -> dict:
+    """
+    Builds a mapping from node name strings → node_id integers.
+    These integer IDs are what you pass as target_node_ids during training.
+    They index into root.node_list, which is what HierarchicalSoftmaxLoss uses.
+    """
+    root.set_indexes_if_unset()
+    label_to_id = {}
+    for node_id, node in enumerate(root.node_list):
+        # Full path (e.g., "LINE/CR1")
+        if node.parent and not node.parent.is_root:
+            full_name = "/".join(
+                [str(n) for n in node.ancestors[1:]] + [str(node)]
+            )
+        else:
+            full_name = str(node)
+        label_to_id[full_name] = node_id
+        # Short name if unambiguous
+        short_name = str(node)
+        if short_name not in label_to_id:
+            label_to_id[short_name] = node_id
+    return label_to_id
+
+
+def node_lineage_string(node) -> str:
+    """Convert a SoftmaxNode to its full lineage path string."""
+    if node.is_root:
+        return "Unknown"
+    return "/".join([str(n) for n in node.ancestors[1:]] + [str(node)])
+
+def get_PI(path):
+    all_pkl = {}
+    image_files = glob.glob(f"./{path}/*tar.gz")
+    # print(image_files)
+    for file in image_files:
+        with tarfile.open(file, "r:gz") as tar:
+            all_files = tar.getnames()
+            pkl_path = next((f for f in all_files if f.endswith('.pkl')), None)
+            if pkl_path:
+                member = tar.getmember(pkl_path)
+                f = tar.extractfile(member)
+                data = pickle.load(f)
+                all_pkl = all_pkl | data
+    return all_pkl
+
+
+def update_metadata(lookup, all_pkl):
+    for seq, metadata in lookup.items():
+        if seq in all_pkl:
+            all_pkl[seq].update(metadata)
+        else:
+            all_pkl[seq] = {
+                **metadata,
+                'persistence_image': np.zeros((128,128,5)) #add 0 if none
+            }
+    return all_pkl
+
+
+def split_data(all_pkl, lookup):
+    filtered_pkl = {}
+    for seq, metadata in lookup.items():
+        if seq in all_pkl:
+            # Create a shallow copy so the original all_pkl stays untouched
+            entry = all_pkl[seq].copy()
+            entry.update(metadata)
+            filtered_pkl[seq] = entry
+        else:
+            # Create a brand new entry for sequences not in all_pkl
+            filtered_pkl[seq] = {
+                **metadata,
+                'persistence_image': np.zeros((128, 128, 5))
+            }
+    return filtered_pkl
+
+
+def prep_for_dataloader(all_pkl, n):
+    # Get data ready for dataloader
+    train = []
+    label = []
+    label_id = []
+    sequences = []
+    dataset = []
+    for key, values in all_pkl.items():
+        train.append(values['persistence_image'])
+        label.append(values['labels'])
+        label_id.append(values['label_id'])
+        sequences.append(key)
+        dataset.append(values['dataset'])
+    dataset = {f'x{n}': train, 'label_id':label_id, 'Label':label, 'seq_x':sequences, 'dataset':dataset}
+    return dataset
+
+
+def get_train_test(all_pkl, train_lookup, test_lookup):
+    train = split_data(all_pkl, train_lookup)
+    test = split_data(all_pkl, test_lookup)
+    return train, test
+
+
+def dataloader_ready(train, test, n):
+    train = prep_for_dataloader(train, n)
+    test = prep_for_dataloader(test, n)
+    return train, test
+
+
+def get_test_train_split(all_pkl, labels, i):
+    train = labels[labels[f'fold_{i}'] == 'train']
+    test = labels[labels[f'fold_{i}'] == 'test']
+    train_lookup = train.drop_duplicates('seq_x').set_index('seq_x')[['label_id', 'labels',f'fold_{i}', 'dataset']].to_dict('index')
+    test_lookup = test.drop_duplicates('seq_x').set_index('seq_x')[['label_id', 'labels',f'fold_{i}', 'dataset']].to_dict('index')
+    train, test = get_train_test(all_pkl, train_lookup, test_lookup)
+    train, test = dataloader_ready(train, test, i)
+    return train, test
+
+
+labels_path = sys.argv[1] #'.csv'
+pi_dir = sys.argv[2] #'MnTEdb/'
+save_name = sys.argv[3] #'MnTEdb'
+
+device = torch.device('cuda')
+n_epochs = 100
+
+# Create tree and id mappings
+ORDER_TO_SUPERFAMILIES = {
+    'LTR': ['','ERV','Pao','Gypsy','DIRS','Caulimovirus','Copia'],
+    'DNA': ['','PiggyBac','Ginger','Academ','Crypton','Sola','CMC',
+              'IS3EU','Novosib','Harbinger','P','hAT','Maverick',
+              'Dada','Zator','Kolobok','Merlin','MULE','Zisupton','TcMar'],
+    'LINE': ['','CRE','Proto1','Rex-Babar','L2','Tad1','Proto2','I',
+              'RTE','Dualen','Dong-R4','CR1','R2','L1','R1'],
+    'Satellite': [''],
+    'RC': ['Helitron'],
+    'SINE': ['', 'U', '7SL', 'tRNA', '5S'],
+    'Structural_RNA': [''],
+    'PLE': [''],
+    'Other': ['']}
+
+# Build tree
+root = build_classification_tree(ORDER_TO_SUPERFAMILIES)
+label_map = build_label_to_node_id(root)
+
+# Load labels
+labels = pd.read_csv(labels_path)
+labels['label_id'] = labels['labels'].map(label_map)
+lookup = labels.drop_duplicates('seq_x').set_index('seq_x')[['label_id', 'labels', 'dataset']].to_dict('index')
+
+pi_paths = [f'{pi_dir}/4mer', f'{pi_dir}/8mer', f'{pi_dir}/14mer', f'{pi_dir}/20mer']
+
+all_pkl = {}
+train_images = []
+
+for p in pi_paths:
+    pkl_file = get_PI(p)
+    pkl_file = update_metadata(lookup, pkl_file)
+    folds = {}
+    for i in range(5):
+        train, test = get_test_train_split(pkl_file, labels, i=i)
+        folds[f'split_{i}'] = {'train': train, 'test': test}
+    all_pkl[p] = folds # for given database, all the splits for all kmers
+
+datasets = list(all_pkl.keys())
+train_dict = {}
+test_dict = {}
+
+
+torch.manual_seed(777)
+for fold in range(5):
+    all_results = {} # To save all results
+
+    print(f"fold {fold}")
+
+    model = HierarchicalCNN(root_node=root).to(device)
+    criterion = HierarchicalSoftmaxLoss(root=root)
+    optimizer = optim.Adam(model.parameters(), lr=1e-3)
+
+    train_dict = {}
+    test_dict = {}
+    split = f'split_{fold}'
+
+    for key, value in all_pkl.items():
+        train = value[split]['train'][f'x{fold}']
+        train_label = value[split]['train']['Label']
+        train_id = value[split]['train']['label_id']
+        train_seq = value[split]['train']['seq_x']
+        train_ds = value[split]['train']['dataset']
+        test = value[split]['test'][f'x{fold}']
+        test_label = value[split]['test']['Label']
+        test_id = value[split]['test']['label_id']
+        test_seq = value[split]['test']['seq_x']
+        test_ds = value[split]['test']['dataset']
+        train_dict.update({'Label': train_label, 'label_id': train_id, 'seq_x': train_seq, 'dataset': train_ds, f'{key}': train})
+        test_dict.update({'Label': test_label, 'label_id': test_id, 'seq_x': test_seq, 'dataset': test_ds, f'{key}': test})
+    
+    train_dataset = PersistenceDataset(train_dict, datasets)
+    test_dataset = PersistenceDataset(test_dict, datasets)
+
+    torch.manual_seed(777)
+
+    train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
+    test_loader = DataLoader(test_dataset, batch_size=32, shuffle=True)
+    loss_history = {}
+
+    torch.cuda.empty_cache()
+
+    for epoch in range(n_epochs):
+        model.train()
+        running_loss = 0
+        batches = 0
+        # total_loss = []
+        for x4, x8, x14, x20, seq, ids, label, d in train_loader:
+            x4 = x4.to(device)
+            x8 = x8.to(device)
+            x14 = x14.to(device)
+            x20 = x20.to(device)
+            ids = ids.to(device)
+            # Forward pass 
+            outputs, embeddings = model(x4, x8, x14, x20)
+            # Loss
+            loss = criterion(outputs, ids)
+            # Backwards pass
+            optimizer.zero_grad() # Reset gradients from last batch
+            loss.backward() # Backpropagation
+            optimizer.step()      # Update parameters
+            running_loss += loss.item()
+            batches += 1
+        #print(f"\nTraining loss:  {loss:.4f}")
+        epoch_loss = running_loss / batches
+        print(f"\nEpoch loss: {epoch_loss:.10f}")
+        loss_history[epoch] = epoch_loss
+
+    save_path = f'/staging/s/svaren/terrier_zzformer/dim/{save_name}_f{fold}.pth'
+    torch.save({
+        'epoch': n_epochs,
+        'model_state_dict': model.state_dict(),
+        'optimizer_state_dict': optimizer.state_dict(),
+        'loss': loss_history
+    }, save_path)
+
+    # INFERENCE
+    order_preds = []
+    super_preds = []
+    trues = []
+    outss = []
+    z = []
+    model.eval() 
+
+    with torch.no_grad():
+        for x4, x8, x14, x20, seq, ids, label, d in test_loader:
+            x4 = x4.to(device)
+            x8 = x8.to(device)
+            x14 = x14.to(device)
+            x20 = x20.to(device)
+            outputs, embeddings = model(x4, x8, x14, x20)
+            order_predicts = greedy_predictions(outputs, max_depth=1,root=root)
+            superfam_preds = greedy_predictions(outputs, root=root)
+            outss.extend(outputs)
+            order_preds.extend(order_predicts)
+            super_preds.extend(superfam_preds)
+            trues.extend(label)
+            z.append(embeddings)
+
+    all_results[f"fold_{fold}"] = {'pred_y_order': order_preds,
+                                   'pred_y_super': super_preds,
+                                   'test_y': trues,
+                                   'outs': outss,
+                                   'embeddings': z,
+                                   'fold': fold}
+    print(save_name)
+
+    with open(f'/staging/s/svaren/terrier_zzformer/dim/{save_name}_results_fold{fold}.pkl', 'wb') as f:
+        pickle.dump(all_results, f)
