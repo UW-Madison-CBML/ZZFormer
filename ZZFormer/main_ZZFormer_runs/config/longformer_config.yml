@@ -1,0 +1,40 @@
+model:
+  d_model: 256                 # → LongformerConfig.hidden_size
+  nhead: 4                     # 256 / 4 = 64-dim heads (was 2 / 128-dim, unusual)
+  num_layers: 4                # MUST equal len(k_mers)
+  dim_feedforward: 1024        # → intermediate_size
+  dropout: 0.1
+  max_seq_len: 1024            # body length; TopoDataset pads to exactly this
+
+  # ── Longformer ──
+  attention_window: 256        # 1024 % 256 == 0 ✓
+  max_position_embeddings: 1026  # >= max_seq_len + 2 (BOS/EOS) ✓
+
+  # ── Topology cross-attention ──
+  k_mers: [4, 8, 14, 20]       # len(k_mers) == num_layers
+  topology_latent_dim: 64      # final Linear in each TopologyEncoder
+  topology_in_channels: 5      # PI channels (H, W, C=5)
+  topology_cnn_filters: 16     # Encoder base width
+
+  # ── Head ──
+  classifier_hidden_dim: 256
+  # pool: removed — model always BOS-pools
+
+# vocab_size: removed — hardcoded from VOCAB dict in train script
+
+label_smoothing: 0.0
+gamma: 0.0
+
+train:
+  batchsize: 256                # was 512 — will OOM with 4 CNN heads + Longformer
+  num_workers: 4               # was 16 — pi_lookups gets copied per worker
+  lr: 0.0001
+  epochs: 200                   # was 300; add periodic val if you keep it high
+
+wandb:
+  team: kkumari-university-of-wisconsin-madison
+  project: ZZFORMER_Terrierlabeling
+  dir: /tmp/wandb
+
+dir:
+  save_dir: /staging/kkumari/terrsystem/ZZFormer_CNN/
