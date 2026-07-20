@@ -56,7 +56,7 @@ python train_zzformer_concat.py \
 # Citation
 ```
 @article{ZZFormer,
-  author=Kritika Kumari and Levi Svaren1, Dhananjay Bhaskar,
+  author=Kritika Kumari and Levi Svaren, Dhananjay Bhaskar,
   title=ZZFORMER: A SLIDING WINDOW ZIGZAG PERSISTENT
 HOMOLOGY TRANSFORMER FOR REPETITIVE SEQUENCES
 }
