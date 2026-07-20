@@ -12,10 +12,6 @@ git clone https://github.com/UW-Madison-CBML/ZZFormer.git
 
 Use requirements.txt to build environment or pull docker image `lsvaren/transformers`
 
-```
-
-
-```
 
 ### Zigzag homology computation
 
@@ -31,7 +27,8 @@ python preML.py "A,T,G,C,X" 100 4 "dna_preML.txt"
 
 ### Persistence image computation
 ```
-
+# output.tar.gz contains results_dna_preML_4mer.pkl
+python PI.py /path/to/zzph_output output.tar.gz {kmer_size}
 ```
 
 
