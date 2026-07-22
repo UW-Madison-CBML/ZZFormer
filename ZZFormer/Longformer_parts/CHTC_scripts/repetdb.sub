@@ -1,12 +1,11 @@
-container_image = docker://kritikakumari22/tda_seqemb:zzformer_transformeronly3 
-
+container_image = docker://kritikakumari22/tda_seqemb:zzformer_transformeronly5
 
 Universe = container
 
 +SingularityPull = True
 +DockerEnableAutoUpdate = True
 
-executable = repbase_sf4.sh
+executable = repetdb.sh
 
 
 
@@ -19,12 +18,12 @@ environment = "TRANSFORMERS_CACHE=/tmp/huggingface_cache \
 
 
 
-output = log_repbase4/out.out
-error  = log_repbase4/err.err
-log    = log_repbase4/log.log
+output = log_repetdbf/out.out
+error  = log_repetdbf/err.err
+log    = log_repetdbf/log.log
 
 
-#transfer_input_files = 
+transfer_input_files = ALL_SCRIPTS,/home/kkumari/May26/newdataset_pickles_terrsys
 #transfer_output_files = 
 should_transfer_files = YES
 when_to_transfer_output = ON_EXIT
@@ -32,12 +31,12 @@ when_to_transfer_output = ON_EXIT
 +WantGPULab=true
 +GPUJobLength = "long"
 request_gpus = 1
-request_cpus= 64
+request_cpus= 16
 
 
 
 gpus_minimum_memory = 50000
-retry_request_memory = RequestMemory*2
+request_memory = 100GB
 #requirements = (CUDAGlobalMemoryMb >= 120000)
 request_memory = 64GB
 request_disk = 42GB
