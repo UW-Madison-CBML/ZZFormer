@@ -3,10 +3,10 @@
 This folder contains the Longformer masked language model (MLM) pretraining workflow and UMAP-based embedding visualization scripts used in the ZZFormer pipeline.
 
 The project is structured with:
-- model-training entrypoint: `pretrain_longformer_mlm.py`
-- visualization entrypoint: `visualize_umap.py`
-- data loading/preprocessing logic in `data/`
-- experiment configs in `config/`
+- model-training (including dataloader) entry point: `pretrain_longformer_mlm.py`
+- visualization entry point: `visualize_umap.py`
+- BERT-style MLM masking generation algorithm in `data/dataloader.py`
+- experiment config used in `config/longformer_mlm_config.yml`
 - cluster execution scripts in `CHTC_scripts/`
 
 ---
