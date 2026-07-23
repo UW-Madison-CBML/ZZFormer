@@ -44,8 +44,17 @@ concatenation_model/
 ```bash
 python train_zzformer_concat.py \
   --config <path-to-config> \
+  --pi_dir <path to directory which has the persistence images as .tar.gz files> \
+  --pretrained_mlm <checkpoint> \
   --fold <int> \
-  --device <cuda|cpu>
+  --train_dir <path to train_pickle> \
+  --val_dir <path to val_pickle> \
+  --save_dir <path to save directory> \
+  --run_name <name of the run> \
+  --seed <random seed> \
+  --wandb_project <optional wandb project name> \
+  --wandb_team <optional wandb team name> \
+  --wandb_dir <optional wandb directory>
 ```
 
 
@@ -76,23 +85,28 @@ python train_zzformer_concat.py \
 ## Visualization Utilities
 
 - `visualize_umap.py`: UMAP visualization pipeline.
+```bash
+python visualize_umap.py \
+  --config <path-to-config> \
+  --train_file  <path to train_pickle> \
+  --test_file  <path to val_pickle> \
+  --model_dir <path to a specific fold's saved model weights .pt> \
+  --save_dir <path to save directory for output embedding .npy and the visual .png> \
+  --pi_dir <path to directory which has the persistence images as .tar.gz files> \
+  --run_name <name of the run> \
+  --DPI <dpi value for image resolution>
+```
 
 
-These scripts are useful for post-training representation analysis and class separability checks.
 
 ---
 
 ## Typical Workflow
 
-1. Configure experiment in `config/`.
-2. Train concat model via `train_zzformer_concat.py`.
-3. Optionally run transformer-only retraining with `retrain_onlytransformer.py`.
-4. Evaluate metrics (from training logs / utility routines).
-5. Visualize embedding structure using TSNE/UMAP scripts.
+1. Pretrain the Longformer encoder model from Longformer_MLM_pretraining folder alongside this folder.
+2. Configure model dimensions in `config/`, make sure to keep it consistent to the pretrained weights you will be loading.
+3. Prepare stratified data splits into k-folds. Prepare persistence images where the each file has images in a dictionary format - {seq: {{k}mer:persistence_image}} for k in [4, 8, 14, 20]
+4. Train concat model via `train_zzformer_concat.py` with the arguments given above
+5. Visualize embedding structure using the UMAP script.
 
 ---
-
-## Notes
-
-- Ensure feature dimensions in config align with the concatenation layer expectations.
-- Keep tokenizer/preprocessing settings synchronized across training and retraining scripts.
