@@ -56,7 +56,7 @@ python train_longformer.py \
 
 ---
 
-## Model Module
+## Model
 
 We use LongformerForSequenceClassification from the transformers package as used by TeClass2 (`Bickmann, Lucas, et al. "Transformer-Based Classification of Transposable Element Consensus Sequences with TEclass2." Biology 15.1 (2025): 59`.)
 
