@@ -142,26 +142,7 @@ python "$SUBMIT_DIR"/visualize_umap.py \
 1. Set up environment and paths (as done in `train.sh`).
 2. Run MLM pretraining with `pretrain_longformer_mlm.py`.
 3. Use generated `mlm_best.pt` for UMAP visualization with `visualize_umap.py`.
-4. Compare representation structure across Repbase, RepetDB, and MnTEdb outputs.
+4. Compare final representations across Repbase, RepetDB, and MnTEdb outputs using the visualizations.
 
 ---
 
-## Exact CLI Parameters Used (from `train.sh`)
-
-- `pretrain_longformer_mlm.py`:
-  - `--config`
-  - `--train_dir`
-  - `--save_dir`
-  - `--wandb_project`
-  - `--wandb_team`
-  - `--wandb_dir`
-  - `--run_name`
-  - `--seed`
-
-- `visualize_umap.py`:
-  - `--config`
-  - `--seq_file`
-  - `--model_dir`
-  - `--save_dir`
-  - `--run_name`
-  - `--DPI`
