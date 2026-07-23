@@ -70,9 +70,7 @@ python pretrain_longformer_mlm.py \
 ## Visualization Script
 
 ### `visualize_umap.py`
-
-**Purpose:**  
-Loads pretrained MLM weights and visualizes learned sequence representations using UMAP.
+This script Loads pretrained MLM weights and visualizes learned sequence representations using UMAP.
 
 **model:**  
 - Reuses the pretrained Longformer weights from:
@@ -80,15 +78,12 @@ Loads pretrained MLM weights and visualizes learned sequence representations usi
 - Generates embedding projections for different datasets, enabling qualitative comparison of representation structure across corpora.
 
 **Input Data:**  
-The CHTC script runs visualization on three sequence datasets via `--seq_file`:
-1. `RepBase31pt04_converted2_terrierlabelsMay13.pkl`
-2. `Repetdb_allfiltered_terrier_May13.pkl`
-3. `MnTEdb_terrier.pkl`
+The CHTC script runs visualization on sequence datasets via `--seq_file`, the input is a pickle file and its format is {seq:(order/superfamily} but only the sequence keys of this dictionary is used for MLM pretraining. Only RepBase 31.04 version was used after remapping the labels using terrier labelling system as described in the `ZZFormer/Data_preprocessing` folder in detail for any dataset of choice.
 
-All are read from `$raw_submit_dir`.
 
 **Run commands used in `CHTC_scripts/train.sh`:**
 
+This script can also be run locally using the Docker image `kritikakumari22/tda_seqemb:pretrain_final_8_viz`. For the run, the folder structure needs to be maintained, and $SUBMIT_DIR needs to be the same as the directory where visualize_umap.py exists.
 **Repbase**
 ```bash
 python "$SUBMIT_DIR"/visualize_umap.py \
