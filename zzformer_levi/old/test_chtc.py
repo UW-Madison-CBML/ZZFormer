@@ -66,6 +66,8 @@ IGNORE_INDEX   = -100
 with open("longformer_config.yml", "r") as f:
     cfg = yaml.safe_load(f)
 
+
+
 model_cfg = cfg["model"]
 train_cfg = cfg["train"]
 wandb_cfg = cfg["wandb"]
@@ -97,17 +99,14 @@ label_map = build_label_to_node_id(classification_tree)
 ##############################################################################
 # Load npz
 all_data = defaultdict(list)
-pi_dir = "/staging/s/svaren/072026/MnTEdb"
+pi_dir = "/staging/s/svaren/072026/mntedb"
 
-mer4 = sorted(glob.glob(f"{pi_dir}/*_4mer.npz"), key=extract_chunk_ids)[0]
-mer8 = sorted(glob.glob(f"{pi_dir}/*_8mer.npz"), key=extract_chunk_ids)[0]
-mer14 = sorted(glob.glob(f"{pi_dir}/*_14mer.npz"), key=extract_chunk_ids)[0]
-mer20 = sorted(glob.glob(f"{pi_dir}/*_20mer.npz"), key=extract_chunk_ids)[0]
+mer4 = sorted(glob.glob(f"{pi_dir}/*_4mer.npz"), key=extract_chunk_ids)
+mer8 = sorted(glob.glob(f"{pi_dir}/*_8mer.npz"), key=extract_chunk_ids)
+mer14 = sorted(glob.glob(f"{pi_dir}/*_14mer.npz"), key=extract_chunk_ids)
+mer20 = sorted(glob.glob(f"{pi_dir}/*_20mer.npz"), key=extract_chunk_ids)
 
-mer4 = [sorted(glob.glob(f"{pi_dir}/*_4mer.npz"), key=extract_chunk_ids)[0]]
-mer8 = [sorted(glob.glob(f"{pi_dir}/*_8mer.npz"), key=extract_chunk_ids)[0]]
-mer14 = [sorted(glob.glob(f"{pi_dir}/*_14mer.npz"), key=extract_chunk_ids)[0]]
-mer20 = [sorted(glob.glob(f"{pi_dir}/*_20mer.npz"), key=extract_chunk_ids)[0]]
+
 
 torch.cuda.empty_cache()
 gc.collect()

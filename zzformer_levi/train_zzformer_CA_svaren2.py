@@ -24,7 +24,7 @@ from sklearn.metrics import precision_recall_fscore_support, accuracy_score
 from transformers import LongformerModel, LongformerConfig
 
 # Load my functions and classes
-from model.dataloader_cnn import TopoDataset,LazyTopologyDataset # Dataloader
+from model.dataloader_cnn import TopoDataset,LazyTopoDataset # Dataloader
 from model.ZZFormer_CAatend import HierarchicalLongformerClassifier,TopologyEncoder# Model, CNN
 from model.utils import * # Metrics
 from model.helper_functions import * # all other helper functions
@@ -70,16 +70,18 @@ ORDER_TO_SUPERFAMILIES={'LTR': ['Pao', 'Gypsy', 'Copia', 'DIRS', 'Caulimovirus',
 def run_train(model, dataloader, optimizer, model_cfg):
     model.train()
     total_loss = 0.0
+    # Grab k_mers list from config, default to dataset standard
+    k_mers = model_cfg.get("k_mers", (4, 8, 14, 20))
     for batch_idx, batch in enumerate(dataloader):
         input_ids       = batch["input_ids"].to(DEVICE, non_blocking=True)
         attention_mask  = batch["attention_mask"].to(DEVICE, non_blocking=True)
         target_node_ids = batch["target_node_ids"].to(DEVICE, non_blocking=True)
-        # topology_images = _move_topology_images(batch["topology_images"], DEVICE)
         images = [
-            batch[f"{k}mer_image"].to(DEVICE, non_blocking=True) 
-            for k in model_cfg.get("k_mers", (4, 8, 14, 20))
+            batch[f"{k}mer_images"].to(DEVICE, non_blocking=True) 
+            for k in k_mers
         ]
         optimizer.zero_grad()
+        # Forward pass
         out, _ = model(
             input_ids       = input_ids,
             attention_mask  = attention_mask,
@@ -105,7 +107,7 @@ def run_val(model, dataloader, classification_tree, model_cfg, threshold=0.0):
         target_node_ids = batch["target_node_ids"].to(DEVICE, non_blocking=True)
         # topology_images = _move_topology_images(batch["topology_images"], DEVICE)
         images = [
-            batch[f"{k}mer_image"].to(DEVICE, non_blocking=True) 
+            batch[f"{k}mer_images"].to(DEVICE, non_blocking=True) 
             for k in model_cfg.get("k_mers", (4, 8, 14, 20))
         ]
         out, h = model(
@@ -182,6 +184,7 @@ def main(args):
     train_cfg = cfg["train"]
     wandb_cfg = cfg["wandb"]
     run_tag = args.run_name or "longformer_topo"
+    fold = args.fold
 
     if not args.debugging:
         wandb.init(
@@ -201,7 +204,6 @@ def main(args):
     # Build tree
     label_map = build_label_to_node_id(classification_tree)
 
-
     # --- Data ---
     # Load npz
     all_data = defaultdict(list)
@@ -215,98 +217,47 @@ def main(args):
     gc.collect()
     gc.collect()
 
-    # Metadata: sequence, labels, order, superfamily, fold_0, fold_1, fold_2, fold_3, fold_4
-    for a, b, c, d in zip(mer4, mer8, mer14, mer20):
-        arr4 = load_npz(a, load_meta=False)
-        arr8 = load_npz(b, load_meta=False)
-        arr14 = load_npz(c, load_meta=False)
-        arr20, metadata = load_npz(d, load_meta=True) #only need 1 metadata
-        sequences = [m[0] for m in metadata]
-        labels = [m[1] for m in metadata]
-        label_ids = [label_map.get(m[1]) for m in metadata]
-        order = [m[2] for m in metadata]
-        superfamily = [m[3] for m in metadata]
-        fold_0 = [m[4] for m in metadata]
-        fold_1 = [m[5] for m in metadata]
-        fold_2 = [m[6] for m in metadata]
-        fold_3 = [m[7] for m in metadata]
-        fold_4 = [m[8] for m in metadata]
-        all_data['4mer'].append(arr4)
-        all_data['8mer'].append(arr8)
-        all_data['14mer'].append(arr14)
-        all_data['20mer'].append(arr20)
-        all_data['sequences'].append(sequences)
-        all_data['labels'].append(labels)
-        all_data['label_ids'].append(label_ids)
-        all_data['order'].append(order)
-        all_data['superfamily'].append(superfamily)
-        all_data['fold_0'].append(fold_0)
-        all_data['fold_1'].append(fold_1)
-        all_data['fold_2'].append(fold_2)
-        all_data['fold_3'].append(fold_3)
-        all_data['fold_4'].append(fold_4)
+    file_quads = list(zip(mer4, mer8, mer14, mer20))
 
-    fold = args.fold
-    print(f"Fold {fold}")
+    train_dataset = LazyTopoDataset(
+        file_quads  = file_quads,
+        label_map   = label_map,
+        max_seq_len = model_cfg['max_seq_len'],
+        fold_idx    = args.fold,
+        split       = 'train',
+        k_mers      = (4, 8, 14, 20),
+    )
 
-    train_data = {
-        '4mer': [], '8mer': [], '14mer': [], '20mer': [],
-        'sequences': [], 'label_ids': [], 'labels': [], 'order': [], 'superfamily': []
-    }
-    test_data = {
-        '4mer': [], '8mer': [], '14mer': [], '20mer': [],
-        'sequences': [], 'label_ids': [], 'labels': [], 'order': [], 'superfamily': []
-    }
+    test_dataset = LazyTopoDataset(
+        file_quads  = file_quads,
+        label_map   = label_map,
+        max_seq_len = model_cfg['max_seq_len'],
+        fold_idx    = args.fold,
+        split       = 'test',
+        k_mers      = (4, 8, 14, 20),
+    )
 
-    num_chunks = len(all_data['sequences'])
-    all_results = {}
 
-    for chunk_idx in range(num_chunks):
-        fold_assignments = all_data[f'fold_{fold}'][chunk_idx]
-        # Train and test set idx
-        train_indices = [i for i, assignment in enumerate(fold_assignments) if assignment == "train"]
-        test_indices  = [i for i, assignment in enumerate(fold_assignments) if assignment != "train"]
-        # Split into train and test
-        if train_indices:
-            train_data['4mer'].extend([all_data['4mer'][chunk_idx][i] for i in train_indices])
-            train_data['8mer'].extend([all_data['8mer'][chunk_idx][i] for i in train_indices])
-            train_data['14mer'].extend([all_data['14mer'][chunk_idx][i] for i in train_indices])
-            train_data['20mer'].extend([all_data['20mer'][chunk_idx][i] for i in train_indices])
-            # Metadata
-            train_data['sequences'].extend([all_data['sequences'][chunk_idx][i] for i in train_indices])
-            train_data['labels'].extend([all_data['labels'][chunk_idx][i] for i in train_indices])
-            train_data['label_ids'].extend([all_data['label_ids'][chunk_idx][i] for i in train_indices])
-            train_data['order'].extend([all_data['order'][chunk_idx][i] for i in train_indices])
-            train_data['superfamily'].extend([all_data['superfamily'][chunk_idx][i] for i in train_indices])
-        if test_indices:
-            test_data['4mer'].extend([all_data['4mer'][chunk_idx][i] for i in test_indices])
-            test_data['8mer'].extend([all_data['8mer'][chunk_idx][i] for i in test_indices])
-            test_data['14mer'].extend([all_data['14mer'][chunk_idx][i] for i in test_indices])
-            test_data['20mer'].extend([all_data['20mer'][chunk_idx][i] for i in test_indices])
-            # Metadata
-            test_data['sequences'].extend([all_data['sequences'][chunk_idx][i] for i in test_indices])
-            test_data['labels'].extend([all_data['labels'][chunk_idx][i] for i in test_indices])
-            test_data['label_ids'].extend([all_data['label_ids'][chunk_idx][i] for i in test_indices])
-            test_data['order'].extend([all_data['order'][chunk_idx][i] for i in test_indices])
-            test_data['superfamily'].extend([all_data['superfamily'][chunk_idx][i] for i in test_indices])
+    train_loader = DataLoader(
+        train_dataset, 
+        batch_size=train_cfg["batchsize"], 
+        shuffle=True, 
+        num_workers=train_cfg["num_workers"],
+        pin_memory=True
+    )
+    val_loader = DataLoader(
+        test_dataset, 
+        batch_size=train_cfg["batchsize"], 
+        shuffle=False, 
+        num_workers=train_cfg["num_workers"],
+        pin_memory=True
+    )
+
 
     if args.debugging:
         train_data = _slice_data_dict(train_data, 100)
         test_data   = _slice_data_dict(test_data,    50)
 
-    # --- Datasets ---
-    train_dataset = TopoDataset(
-        train_data, 
-        max_seq_len=model_cfg['max_seq_len'], 
-        k_mers=model_cfg['k_mers'], 
-        mask=False
-    )
-    test_dataset = TopoDataset(
-        test_data, 
-        max_seq_len=model_cfg['max_seq_len'], 
-        k_mers=model_cfg['k_mers'],
-        mask=False
-    )
     print("We are using model - HierarchicalLongformerClassifier_Concat")
     # --- Model (Longformer + per-k-mer CNN topology cross-attention) ---
     model = HierarchicalLongformerClassifier(
@@ -331,13 +282,6 @@ def main(args):
         topo_reduced_persistence= 16,
     )
 
-    # topology_encoder = TopologyEncoder(
-    #     n_channels=model_cfg["topology_in_channels"], 
-    #     n_filters=model_cfg["topology_cnn_filters"], 
-    #     model_dim=model_cfg["classifier_hidden_dim"], 
-    #     reduced_persistence=16
-    # ).to(DEVICE)
-
     # --- Pre-trained MLM backbone ---
     if args.pretrained_mlm:
         model = load_pretrained_longformer_mlm(args.pretrained_mlm, model, DEVICE)
@@ -352,20 +296,6 @@ def main(args):
     FREEZE_EPOCHS = 3
     print(f"Backbone frozen for first {FREEZE_EPOCHS} epochs")
 
-    train_loader = DataLoader(
-        train_dataset, 
-        batch_size=train_cfg["batchsize"], 
-        shuffle=True, 
-        num_workers=train_cfg["num_workers"],
-        pin_memory=True
-    )
-    val_loader = DataLoader(
-        test_dataset, 
-        batch_size=train_cfg["batchsize"], 
-        shuffle=False, 
-        num_workers=train_cfg["num_workers"],
-        pin_memory=True
-    )
 
     max_id_in_data = max(max(train_data['label_ids']), max(test_data['label_ids']))
     n_nodes        = len(classification_tree.node_list)
@@ -380,11 +310,6 @@ def main(args):
         lr=train_cfg.get("lr", 1e-4),
         weight_decay=train_cfg.get("weight_decay", 0.01)
     )
-
-    # optimizer = torch.optim.AdamW(
-    #     filter(lambda p: p.requires_grad, model.parameters()),
-    #     lr=cfg["train"]["lr"],
-    # )
 
     # --- Save dir ---
     save_dir  = args.save_dir or cfg["dir"]["save_dir"]

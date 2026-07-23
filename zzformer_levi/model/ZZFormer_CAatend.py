@@ -132,6 +132,9 @@ class HierarchicalLongformerClassifier(nn.Module):
         eos_token_id: int = 7,
         classifier_hidden_dim: int = 256,
         topology_latent_dim: int = 256,
+        topo_channels: int = 3,
+        topo_filters: int = 16,
+        topo_reduced_persistence: int = 16,
         k_mers=(4, 8, 14, 20),
     ):
         super().__init__()
@@ -166,6 +169,14 @@ class HierarchicalLongformerClassifier(nn.Module):
         )
         # Attribute name stays `longformer` so MLM-checkpoint keys still load.
         self.longformer = LongformerModel(longformer_config, add_pooling_layer=False)
+
+        # topology model
+        self.topology_encoder = TopologyEncoder(
+            n_channels=topo_channels,
+            n_filters=topo_filters,
+            model_dim=topology_latent_dim,
+            reduced_persistence=topo_reduced_persistence,
+        )
         # ---- 2. Per-layer BOS cross-attention ----
         # Passes kdim/vdim directly so CrossAttentionFullQ handles initial feature alignment
         self.full_cross_attn = nn.ModuleList([
@@ -262,13 +273,15 @@ class HierarchicalLongformerClassifier(nn.Module):
         input_ids,
         attention_mask,
         target_node_ids,
-        topology_latent_stack,
+        topology_images,
     ):
-        assert len(topology_latent_stack) == self.num_layers, (
+        assert len(topology_images) == self.num_layers, (
             f"Expected {self.num_layers} topology latents "
             f"(one per Longformer layer / k-mer {self.k_mers}), "
-            f"got {len(topology_latent_stack)}."
+            f"got {len(topology_images)}."
         )
+        topology_latent_stack = [self.topology_encoder(img) for img in topology_images]
+
         h = self._run_longformer_interleaved(
             input_ids             = input_ids,
             valid_mask            = attention_mask,
