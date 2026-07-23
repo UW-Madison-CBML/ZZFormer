@@ -1,4 +1,4 @@
-# ZZFormerconcatenation model
+# ZZFormer concatenation model
 
 This folder implements the ZZFormer **concatenation-based training variants**, where representations from transformer components and/or feature pathways are combined before prediction.
 
@@ -48,79 +48,35 @@ python train_zzformer_concat.py \
   --device <cuda|cpu>
 ```
 
-**Arguments (to be finalized from script parser):**
-- `--config`
-- `--fold`
-- `--device`
-- training hyperparameters from script (batch size, lr, epochs, seed, output/checkpoint paths, etc.)
+
+- training hyperparameters from script (batch size, lr, epochs, seed, number of heads, number of encoder layers, feedforward dimension, GLOBAL tokens (used - BOS only), save directory, train input .pickle paths, etc.)
 
 ---
 
-### 2) `retrain_onlytransformer.py`
-**Purpose:** Retraining/fine-tuning workflow focused on the transformer-only branch (without full concatenation pathway, or with selective branch freezing depending on script logic).
 
-**Model called:**  
-- Transformer-focused model path, usually from `model/` modules or direct transformer class instantiation.
-
-**What this model is:**  
-- A reduced/specialized variant used to isolate transformer contribution or perform staged retraining.
-
-**Data pipeline used:**  
-- Reuses `data/` dataloaders with potentially different config settings for retraining experiments.
-
-**Run (template):**
-```bash
-python retrain_onlytransformer.py \
-  --config <path-to-config> \
-  --fold <int> \
-  --device <cuda|cpu> \
-  --checkpoint <optional-initial-weights>
-```
-
-**Arguments (to be finalized from script parser):**
-- `--config`, `--fold`, `--device`
-- optional checkpoint/pretrained args
-- optimizer/scheduler and runtime args as defined in script
-
----
 
 ## Model Package (`model/`)
 
 `model/` contains the architecture code used by the above training scripts.  
-Typical responsibilities:
-- Transformer encoder setup,
+- Longformer encoder setup,
 - feature projection layers,
 - concatenation/fusion blocks,
-- classification heads,
-- forward variants for full concat vs transformer-only retraining.
+- Hierarchical classification head,
 
----
-
-## Data Package (`data/`)
-
-`data/` provides:
-- dataset wrappers,
-- fold split handling,
-- tokenization/encoding,
-- collate functions matching expected model inputs for fusion/retraining modes.
 
 ---
 
 ## Metrics & Utilities (`utils.py`)
 
 `utils.py` includes shared experiment utilities and metric computation, typically:
-- metric calculation for classification performance,
-- logging helpers,
-- seed/setup helpers,
-- checkpoint and result formatting utilities.
-
+- Macro metric calculation for  precision, recall, F1, and accuracy
+- 
 ---
 
 ## Visualization Utilities
 
-- `visualize_tsne.py`: t-SNE projection for learned embeddings/features.
 - `visualize_umap.py`: UMAP visualization pipeline.
-- `visualize_umap_heirarchical.py`: hierarchical UMAP analysis variant.
+
 
 These scripts are useful for post-training representation analysis and class separability checks.
 
@@ -138,6 +94,5 @@ These scripts are useful for post-training representation analysis and class sep
 
 ## Notes
 
-- Use consistent fold definitions and seeds when comparing concat vs transformer-only runs.
 - Ensure feature dimensions in config align with the concatenation layer expectations.
 - Keep tokenizer/preprocessing settings synchronized across training and retraining scripts.
