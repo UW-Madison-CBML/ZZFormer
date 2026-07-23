@@ -50,17 +50,16 @@ PRETRAINED_MODEL="/staging/kkumari/terrsystem/pretraining_longformerreponlyMay28
 
 
 DATA_DIR="$SUBMIT_DIR/newdataset_pickles_terrsys/"
-OUTPUT_DIR="/staging/kkumari/terrsystem/longformer_hierar_wprtrn/$DATASET_NAME/"
+OUTPUT_DIR="/staging/kkumari/terrsystem/longformer_runs_wprtrn/$DATASET_NAME/"
 mkdir -p "$OUTPUT_DIR"
-
 
 # Loop over folds 0 to 4
 for fold in {0..4}; do
-  run_name="${DATASET_NAME}_longformerHierarprtrn_${fold}"
+  run_name="${DATASET_NAME}_longformerpretrn_${fold}"
   TRAIN_FILE=$DATA_DIR/${DATASET_NAME}/fold_${fold}_train_seqlabels.pkl
   TEST_FILE=$DATA_DIR/${DATASET_NAME}/fold_${fold}_test_seqlabels.pkl
   
-  python train_longformer_withpretrnwts.py \
+  python train_longformer_withpretrnwts_nothierarchical.py \
   --config "$WORKDIR"/config/longformer_config.yml \
   --fold $fold \
   --pretrained_mlm $PRETRAINED_MODEL \

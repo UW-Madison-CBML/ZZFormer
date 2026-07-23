@@ -60,7 +60,7 @@ for fold in {0..4}; do
   TRAIN_FILE=$DATA_DIR/${DATASET_NAME}/fold_${fold}_train_seqlabels.pkl
   TEST_FILE=$DATA_DIR/${DATASET_NAME}/fold_${fold}_test_seqlabels.pkl
   
-  python train_longformer_withpretrnwts.py \
+  python train_longformer_withpretrnwts_nothierarchical.py \
   --config "$WORKDIR"/config/longformer_config.yml \
   --fold $fold \
   --pretrained_mlm $PRETRAINED_MODEL \
