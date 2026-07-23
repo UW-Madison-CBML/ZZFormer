@@ -178,20 +178,34 @@ class LazyTopoDataset(Dataset):
         attention_mask = torch.zeros((self.max_seq_len,), dtype=torch.long)
         input_ids[:len(ids)] = torch.tensor(ids, dtype=torch.long)
         attention_mask[:len(ids)] = 1
-        return input_ids, attention_mask
+
+        # -----------------------------
+        # Topology mask
+        # -----------------------------
+
+        topology_key_padding_mask = torch.ones(
+            self.max_seq_len,
+            dtype=torch.bool,
+        )
+
+        topology_key_padding_mask[:len(body)] = False
+
+
+        return input_ids, attention_mask, topology_key_padding_mask
     def __len__(self):
         return len(self.samples)
     def __getitem__(self, idx):
         sample = self.samples[idx]
         seq = sample["sequence"]
         paths = sample["paths"]
-        input_ids, attention_mask = self._tokenize(seq)
+        input_ids, attention_mask,topology_key_padding_mask = self._tokenize(seq)
         item = {
             "input_ids":       input_ids,
             "attention_mask":  attention_mask,
             "target_node_ids": torch.tensor(sample["label_id"], dtype=torch.long),
             "labels":          sample["label_str"],
             "sequence":        seq,
+            "topology_key_padding_mask": topology_key_padding_mask,
         }
         images = []
         for k in self.k_mers:
