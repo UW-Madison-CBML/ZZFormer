@@ -1,0 +1,44 @@
+container_image = docker://kritikakumari22/tda_seqemb:zzformer_transformeronly5 
+
+
+Universe = container
+
++SingularityPull = True
++DockerEnableAutoUpdate = True
+
+executable = mntedb.sh
+
+
+
+environment = "TRANSFORMERS_CACHE=/tmp/huggingface_cache \
+               HF_HOME=/tmp/huggingface_home \
+               MPLCONFIGDIR=/tmp/matplotlib_cache \
+               WANDB_DIR=/tmp/wandb \
+               WANDB_CONFIG_DIR=/tmp/wandb \
+               WANDB_CACHE_DIR=/tmp/wandb "
+
+
+
+output = log_mntedb/out.out
+error  = log_mntedb/err.err
+log    = log_mntedb/log.log
+
+
+transfer_input_files = ALL_SCRIPTS,/home/kkumari/May26/newdataset_pickles_terrsys
+#transfer_output_files = 
+should_transfer_files = YES
+when_to_transfer_output = ON_EXIT
+
+request_gpus = 1
+request_cpus= 16
+
+
+
+gpus_minimum_memory = 50000
+request_memory = 100GB
+retry_request_memory = RequestMemory*2
+#requirements = (CUDAGlobalMemoryMb >= 120000)
+request_disk = 42GB
+
+queue 1
+
