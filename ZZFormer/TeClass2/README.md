@@ -39,18 +39,28 @@ Trains a Longformer-based TeClass2 classifier for sequence-level prediction task
 - Data preprocessing includes tokenized sequence encoding aligned to the Longformer configuration used by this folder.
 - Batches are structured for supervised classification (input tensors + label tensors), and fold-based or split-based training is handled by the CHTC scripts pipeline.
 
+
 **Run:**
 To run locally, use the Docker image: kritikakumari22/tda_seqemb:zzformer_transformeronly5
 Run from the same directory in which train_longformer.py exists.
+
 ```bash
 python train_longformer.py \
   --config <path-to-config> \
-  --train_dir <path-to-train-data> \
-  --valid_dir <path-to-valid-data> \
-  --save_dir <path-to-output-checkpoints> \
-  --run_name <experiment-name> \
-  --seed <seed>
+  --fold <int> \
+  --train_dir <path to train_pickle> \
+  --val_dir <path to val_pickle> \
+  --save_dir <path to save directory> \
+  --run_name <name of the run> \
+  --seed <random seed> \
+  --wandb_project <optional wandb project name> \
+  --wandb_team <optional wandb team name> \
+  --wandb_dir <optional wandb directory>
 ```
+
+
+
+
 
 > If you use a CHTC launcher script for this folder, replace the placeholders with the exact paths/arguments from that `.sh` file (same style as done in `Longformer_MLM_pretraining/README.md`).
 
