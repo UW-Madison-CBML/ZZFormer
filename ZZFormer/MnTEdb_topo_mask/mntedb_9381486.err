@@ -1,0 +1,132 @@
+  WARNING: The scripts proton and proton-viewer are installed in '/home/svaren/.local/bin' which is not on PATH.
+  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+  WARNING: The script isympy is installed in '/home/svaren/.local/bin' which is not on PATH.
+  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+  WARNING: The script markdown-it is installed in '/home/svaren/.local/bin' which is not on PATH.
+  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+  WARNING: The script typer is installed in '/home/svaren/.local/bin' which is not on PATH.
+  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+  WARNING: The scripts torchfrtrace and torchrun are installed in '/home/svaren/.local/bin' which is not on PATH.
+  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+  WARNING: The script treedict is installed in '/home/svaren/.local/bin' which is not on PATH.
+  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+  WARNING: The scripts proton and proton-viewer are installed in '/home/svaren/.local/bin' which is not on PATH.
+  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+  WARNING: The scripts torchfrtrace and torchrun are installed in '/home/svaren/.local/bin' which is not on PATH.
+  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+  WARNING: The scripts accelerate, accelerate-config, accelerate-estimate-memory, accelerate-launch and accelerate-merge-weights are installed in '/home/svaren/.local/bin' which is not on PATH.
+  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+  WARNING: The scripts wandb and wb are installed in '/home/svaren/.local/bin' which is not on PATH.
+  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+/opt/conda/envs/transformers/lib/python3.12/site-packages/transformers/utils/hub.py:110: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from WANDB_API_KEY.
+wandb: Currently logged in as: svaren (svaren-uni) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: Tracking run with wandb version 0.28.1
+wandb: Run data is saved locally in /tmp/wandb/wandb/run-20260726_234953-nlmycsk8
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run MnTEdb_topo
+wandb: ⭐️ View project at https://wandb.ai/svaren-uni/zzformer
+wandb: 🚀 View run at https://wandb.ai/svaren-uni/zzformer/runs/nlmycsk8
+Traceback (most recent call last):
+  File "/var/lib/condor/execute/slot2/dir_921998/scratch/train_zzformer_CA_svaren.py", line 500, in <module>
+    main(args)
+  File "/var/lib/condor/execute/slot2/dir_921998/scratch/train_zzformer_CA_svaren.py", line 436, in main
+    train_loss = run_train(model, train_loader, optimizer, model_cfg)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/lib/condor/execute/slot2/dir_921998/scratch/train_zzformer_CA_svaren.py", line 91, in run_train
+    out, _ = model(
+             ^^^^^^
+  File "/home/svaren/.local/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1776, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/svaren/.local/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1787, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/lib/condor/execute/slot2/dir_921998/scratch/model/ZZFormer_CAatend.py", line 295, in forward
+    h = self._run_longformer_interleaved(
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/lib/condor/execute/slot2/dir_921998/scratch/model/ZZFormer_CAatend.py", line 266, in _run_longformer_interleaved
+    hidden_states = self.full_cross_attn[i](
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/svaren/.local/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1776, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/svaren/.local/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1787, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/lib/condor/execute/slot2/dir_921998/scratch/model/ZZFormer_CAatend.py", line 39, in forward
+    attn_out, _ = self.cross_attn(
+                  ^^^^^^^^^^^^^^^^
+  File "/home/svaren/.local/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1776, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/svaren/.local/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1787, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/svaren/.local/lib/python3.12/site-packages/torch/nn/modules/activation.py", line 1491, in forward
+    attn_output, attn_output_weights = F.multi_head_attention_forward(
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/svaren/.local/lib/python3.12/site-packages/torch/nn/functional.py", line 6352, in multi_head_attention_forward
+    is_batched = _mha_shape_check(
+                 ^^^^^^^^^^^^^^^^^
+  File "/home/svaren/.local/lib/python3.12/site-packages/torch/nn/functional.py", line 6113, in _mha_shape_check
+    assert key_padding_mask.dim() == 2, (
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: For batched (3-D) `query`, expected `key_padding_mask` to be `None` or 2-D but found 3-D tensor instead
+/opt/conda/envs/transformers/lib/python3.12/site-packages/transformers/utils/hub.py:110: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from WANDB_API_KEY.
+wandb: Currently logged in as: svaren (svaren-uni) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: Tracking run with wandb version 0.28.1
+wandb: Run data is saved locally in /tmp/wandb/wandb/run-20260726_235353-czkib455
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run MnTEdb_topo
+wandb: ⭐️ View project at https://wandb.ai/svaren-uni/zzformer
+wandb: 🚀 View run at https://wandb.ai/svaren-uni/zzformer/runs/czkib455
+Traceback (most recent call last):
+  File "/var/lib/condor/execute/slot2/dir_921998/scratch/train_zzformer_CA_svaren.py", line 500, in <module>
+    main(args)
+  File "/var/lib/condor/execute/slot2/dir_921998/scratch/train_zzformer_CA_svaren.py", line 436, in main
+    train_loss = run_train(model, train_loader, optimizer, model_cfg)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/lib/condor/execute/slot2/dir_921998/scratch/train_zzformer_CA_svaren.py", line 91, in run_train
+    out, _ = model(
+             ^^^^^^
+  File "/home/svaren/.local/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1776, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/svaren/.local/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1787, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/lib/condor/execute/slot2/dir_921998/scratch/model/ZZFormer_CAatend.py", line 295, in forward
+    h = self._run_longformer_interleaved(
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/lib/condor/execute/slot2/dir_921998/scratch/model/ZZFormer_CAatend.py", line 266, in _run_longformer_interleaved
+    hidden_states = self.full_cross_attn[i](
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/svaren/.local/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1776, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/svaren/.local/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1787, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/lib/condor/execute/slot2/dir_921998/scratch/model/ZZFormer_CAatend.py", line 39, in forward
+    attn_out, _ = self.cross_attn(
+                  ^^^^^^^^^^^^^^^^
+  File "/home/svaren/.local/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1776, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/svaren/.local/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1787, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/svaren/.local/lib/python3.12/site-packages/torch/nn/modules/activation.py", line 1491, in forward
+    attn_output, attn_output_weights = F.multi_head_attention_forward(
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/svaren/.local/lib/python3.12/site-packages/torch/nn/functional.py", line 6352, in multi_head_attention_forward
+    is_batched = _mha_shape_check(
+                 ^^^^^^^^^^^^^^^^^
+  File "/home/svaren/.local/lib/python3.12/site-packages/torch/nn/functional.py", line 6113, in _mha_shape_check
+    assert key_padding_mask.dim() == 2, (
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: For batched (3-D) `query`, expected `key_padding_mask` to be `None` or 2-D but found 3-D tensor instead

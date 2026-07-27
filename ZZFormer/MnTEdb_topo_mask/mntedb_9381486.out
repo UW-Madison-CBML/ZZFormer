@@ -1,0 +1,400 @@
+Defaulting to user installation because normal site-packages is not writeable
+Collecting hierarchicalsoftmax
+  Downloading hierarchicalsoftmax-1.4.4-py3-none-any.whl.metadata (7.5 kB)
+Collecting anytree>=2.8.0 (from hierarchicalsoftmax)
+  Downloading anytree-2.13.0-py3-none-any.whl.metadata (8.0 kB)
+Requirement already satisfied: attrs>=25.3.0 in /opt/conda/envs/transformers/lib/python3.12/site-packages (from hierarchicalsoftmax) (25.4.0)
+Collecting graphviz>=0.20.3 (from hierarchicalsoftmax)
+  Downloading graphviz-0.21-py3-none-any.whl.metadata (12 kB)
+Requirement already satisfied: plotly>=5.0.0 in /opt/conda/envs/transformers/lib/python3.12/site-packages (from hierarchicalsoftmax) (6.5.2)
+Collecting rich>=10.16.1 (from hierarchicalsoftmax)
+  Downloading rich-15.0.0-py3-none-any.whl.metadata (18 kB)
+Requirement already satisfied: scikit-learn>=1.1.1 in /opt/conda/envs/transformers/lib/python3.12/site-packages (from hierarchicalsoftmax) (1.3.2)
+Collecting torch>=1.10.2 (from hierarchicalsoftmax)
+  Downloading torch-2.13.0-cp312-cp312-manylinux_2_28_x86_64.whl.metadata (38 kB)
+Collecting torchmetrics>=1.4.0.post0 (from hierarchicalsoftmax)
+  Downloading torchmetrics-1.9.0-py3-none-any.whl.metadata (23 kB)
+Collecting typer>=0.15.4 (from hierarchicalsoftmax)
+  Downloading typer-0.27.0-py3-none-any.whl.metadata (15 kB)
+Requirement already satisfied: narwhals>=1.15.1 in /opt/conda/envs/transformers/lib/python3.12/site-packages (from plotly>=5.0.0->hierarchicalsoftmax) (2.16.0)
+Requirement already satisfied: packaging in /opt/conda/envs/transformers/lib/python3.12/site-packages (from plotly>=5.0.0->hierarchicalsoftmax) (25.0)
+Collecting markdown-it-py>=2.2.0 (from rich>=10.16.1->hierarchicalsoftmax)
+  Downloading markdown_it_py-4.2.0-py3-none-any.whl.metadata (7.4 kB)
+Requirement already satisfied: pygments<3.0.0,>=2.13.0 in /opt/conda/envs/transformers/lib/python3.12/site-packages (from rich>=10.16.1->hierarchicalsoftmax) (2.19.2)
+Collecting mdurl~=0.1 (from markdown-it-py>=2.2.0->rich>=10.16.1->hierarchicalsoftmax)
+  Downloading mdurl-0.1.2-py3-none-any.whl.metadata (1.6 kB)
+Requirement already satisfied: numpy<2.0,>=1.17.3 in /opt/conda/envs/transformers/lib/python3.12/site-packages (from scikit-learn>=1.1.1->hierarchicalsoftmax) (1.26.4)
+Requirement already satisfied: scipy>=1.5.0 in /opt/conda/envs/transformers/lib/python3.12/site-packages (from scikit-learn>=1.1.1->hierarchicalsoftmax) (1.12.0)
+Requirement already satisfied: joblib>=1.1.1 in /opt/conda/envs/transformers/lib/python3.12/site-packages (from scikit-learn>=1.1.1->hierarchicalsoftmax) (1.5.3)
+Requirement already satisfied: threadpoolctl>=2.0.0 in /opt/conda/envs/transformers/lib/python3.12/site-packages (from scikit-learn>=1.1.1->hierarchicalsoftmax) (3.5.0)
+Requirement already satisfied: filelock in /opt/conda/envs/transformers/lib/python3.12/site-packages (from torch>=1.10.2->hierarchicalsoftmax) (3.20.3)
+Requirement already satisfied: typing-extensions>=4.10.0 in /opt/conda/envs/transformers/lib/python3.12/site-packages (from torch>=1.10.2->hierarchicalsoftmax) (4.15.0)
+Requirement already satisfied: setuptools>=77.0.3 in /opt/conda/envs/transformers/lib/python3.12/site-packages (from torch>=1.10.2->hierarchicalsoftmax) (80.10.2)
+Collecting sympy>=1.13.3 (from torch>=1.10.2->hierarchicalsoftmax)
+  Downloading sympy-1.14.0-py3-none-any.whl.metadata (12 kB)
+Collecting networkx>=2.5.1 (from torch>=1.10.2->hierarchicalsoftmax)
+  Downloading networkx-3.6.1-py3-none-any.whl.metadata (6.8 kB)
+Requirement already satisfied: jinja2 in /opt/conda/envs/transformers/lib/python3.12/site-packages (from torch>=1.10.2->hierarchicalsoftmax) (3.1.6)
+Requirement already satisfied: fsspec>=0.8.5 in /opt/conda/envs/transformers/lib/python3.12/site-packages (from torch>=1.10.2->hierarchicalsoftmax) (2025.10.0)
+Collecting cuda-toolkit==13.0.3 (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.3; platform_system == "Linux"->torch>=1.10.2->hierarchicalsoftmax)
+  Downloading cuda_toolkit-13.0.3.0-py2.py3-none-any.whl.metadata (17 kB)
+Collecting cuda-bindings<14,>=13.0.3 (from torch>=1.10.2->hierarchicalsoftmax)
+  Downloading cuda_bindings-13.3.1-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl.metadata (2.5 kB)
+Collecting nvidia-cudnn-cu13==9.20.0.48 (from torch>=1.10.2->hierarchicalsoftmax)
+  Downloading nvidia_cudnn_cu13-9.20.0.48-py3-none-manylinux_2_27_x86_64.whl.metadata (1.9 kB)
+Collecting nvidia-cusparselt-cu13==0.8.1 (from torch>=1.10.2->hierarchicalsoftmax)
+  Downloading nvidia_cusparselt_cu13-0.8.1-py3-none-manylinux2014_x86_64.whl.metadata (12 kB)
+Collecting nvidia-nccl-cu13==2.29.7 (from torch>=1.10.2->hierarchicalsoftmax)
+  Downloading nvidia_nccl_cu13-2.29.7-py3-none-manylinux_2_18_x86_64.whl.metadata (2.1 kB)
+Collecting nvidia-nvshmem-cu13==3.4.5 (from torch>=1.10.2->hierarchicalsoftmax)
+  Downloading nvidia_nvshmem_cu13-3.4.5-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (2.1 kB)
+Collecting triton==3.7.1 (from torch>=1.10.2->hierarchicalsoftmax)
+  Downloading triton-3.7.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (1.7 kB)
+Collecting nvidia-cublas==13.1.1.3.* (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.3; platform_system == "Linux"->torch>=1.10.2->hierarchicalsoftmax)
+  Downloading nvidia_cublas-13.1.1.3-py3-none-manylinux_2_27_x86_64.whl.metadata (1.8 kB)
+Collecting nvidia-cuda-nvrtc==13.0.88.* (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.3; platform_system == "Linux"->torch>=1.10.2->hierarchicalsoftmax)
+  Downloading nvidia_cuda_nvrtc-13.0.88-py3-none-manylinux2010_x86_64.manylinux_2_12_x86_64.whl.metadata (1.7 kB)
+Collecting nvidia-cuda-runtime==13.0.96.* (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.3; platform_system == "Linux"->torch>=1.10.2->hierarchicalsoftmax)
+  Downloading nvidia_cuda_runtime-13.0.96-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (1.7 kB)
+Collecting nvidia-cufft==12.0.0.61.* (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.3; platform_system == "Linux"->torch>=1.10.2->hierarchicalsoftmax)
+  Downloading nvidia_cufft-12.0.0.61-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (1.8 kB)
+Collecting nvidia-nvjitlink<14,>=13.0.88 (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.3; platform_system == "Linux"->torch>=1.10.2->hierarchicalsoftmax)
+  Downloading nvidia_nvjitlink-13.3.33-py3-none-manylinux2010_x86_64.manylinux_2_12_x86_64.whl.metadata (1.8 kB)
+Collecting nvidia-cufile==1.15.1.6.* (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.3; platform_system == "Linux"->torch>=1.10.2->hierarchicalsoftmax)
+  Downloading nvidia_cufile-1.15.1.6-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (1.7 kB)
+Collecting nvidia-cuda-cupti==13.0.85.* (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.3; platform_system == "Linux"->torch>=1.10.2->hierarchicalsoftmax)
+  Downloading nvidia_cuda_cupti-13.0.85-py3-none-manylinux_2_25_x86_64.whl.metadata (1.7 kB)
+Collecting nvidia-curand==10.4.0.35.* (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.3; platform_system == "Linux"->torch>=1.10.2->hierarchicalsoftmax)
+  Downloading nvidia_curand-10.4.0.35-py3-none-manylinux_2_27_x86_64.whl.metadata (1.7 kB)
+Collecting nvidia-cusolver==12.0.4.66.* (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.3; platform_system == "Linux"->torch>=1.10.2->hierarchicalsoftmax)
+  Downloading nvidia_cusolver-12.0.4.66-py3-none-manylinux_2_27_x86_64.whl.metadata (1.8 kB)
+Collecting nvidia-cusparse==12.6.3.3.* (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.3; platform_system == "Linux"->torch>=1.10.2->hierarchicalsoftmax)
+  Downloading nvidia_cusparse-12.6.3.3-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (1.8 kB)
+Collecting nvidia-nvtx==13.0.85.* (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.3; platform_system == "Linux"->torch>=1.10.2->hierarchicalsoftmax)
+  Downloading nvidia_nvtx-13.0.85-py3-none-manylinux1_x86_64.manylinux_2_5_x86_64.whl.metadata (1.8 kB)
+Collecting cuda-pathfinder>=1.4.2 (from cuda-bindings<14,>=13.0.3->torch>=1.10.2->hierarchicalsoftmax)
+  Downloading cuda_pathfinder-1.6.0-py3-none-any.whl.metadata (1.9 kB)
+Collecting mpmath<1.4,>=1.1.0 (from sympy>=1.13.3->torch>=1.10.2->hierarchicalsoftmax)
+  Downloading mpmath-1.3.0-py3-none-any.whl.metadata (8.6 kB)
+Collecting lightning-utilities>=0.15.3 (from torchmetrics>=1.4.0.post0->hierarchicalsoftmax)
+  Downloading lightning_utilities-0.15.3-py3-none-any.whl.metadata (5.5 kB)
+Collecting shellingham>=1.3.0 (from typer>=0.15.4->hierarchicalsoftmax)
+  Downloading shellingham-1.5.4-py2.py3-none-any.whl.metadata (3.5 kB)
+Collecting annotated-doc>=0.0.2 (from typer>=0.15.4->hierarchicalsoftmax)
+  Downloading annotated_doc-0.0.4-py3-none-any.whl.metadata (6.6 kB)
+Requirement already satisfied: MarkupSafe>=2.0 in /opt/conda/envs/transformers/lib/python3.12/site-packages (from jinja2->torch>=1.10.2->hierarchicalsoftmax) (3.0.2)
+Downloading hierarchicalsoftmax-1.4.4-py3-none-any.whl (189 kB)
+Downloading anytree-2.13.0-py3-none-any.whl (45 kB)
+Downloading graphviz-0.21-py3-none-any.whl (47 kB)
+Downloading rich-15.0.0-py3-none-any.whl (310 kB)
+Downloading markdown_it_py-4.2.0-py3-none-any.whl (91 kB)
+Downloading mdurl-0.1.2-py3-none-any.whl (10.0 kB)
+Downloading torch-2.13.0-cp312-cp312-manylinux_2_28_x86_64.whl (526.6 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 526.6/526.6 MB 196.0 MB/s  0:00:02
+Downloading cuda_toolkit-13.0.3.0-py2.py3-none-any.whl (2.5 kB)
+Downloading nvidia_cudnn_cu13-9.20.0.48-py3-none-manylinux_2_27_x86_64.whl (366.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 366.2/366.2 MB 289.5 MB/s  0:00:01
+Downloading nvidia_cusparselt_cu13-0.8.1-py3-none-manylinux2014_x86_64.whl (170.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 170.1/170.1 MB 338.7 MB/s  0:00:00
+Downloading nvidia_nccl_cu13-2.29.7-py3-none-manylinux_2_18_x86_64.whl (206.0 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 206.0/206.0 MB 357.2 MB/s  0:00:00
+Downloading nvidia_nvshmem_cu13-3.4.5-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (60.4 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 60.4/60.4 MB 351.6 MB/s  0:00:00
+Downloading triton-3.7.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (197.7 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 197.7/197.7 MB 236.4 MB/s  0:00:00
+Downloading cuda_bindings-13.3.1-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl (6.7 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6.7/6.7 MB 273.4 MB/s  0:00:00
+Downloading nvidia_cublas-13.1.1.3-py3-none-manylinux_2_27_x86_64.whl (423.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 423.1/423.1 MB 335.0 MB/s  0:00:01
+Downloading nvidia_cuda_cupti-13.0.85-py3-none-manylinux_2_25_x86_64.whl (10.7 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.7/10.7 MB 316.5 MB/s  0:00:00
+Downloading nvidia_cuda_nvrtc-13.0.88-py3-none-manylinux2010_x86_64.manylinux_2_12_x86_64.whl (90.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 90.2/90.2 MB 380.1 MB/s  0:00:00
+Downloading nvidia_cuda_runtime-13.0.96-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (2.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.2/2.2 MB 127.2 MB/s  0:00:00
+Downloading nvidia_cufft-12.0.0.61-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (214.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 214.1/214.1 MB 386.0 MB/s  0:00:00
+Downloading nvidia_cufile-1.15.1.6-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (1.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.2/1.2 MB 275.1 MB/s  0:00:00
+Downloading nvidia_curand-10.4.0.35-py3-none-manylinux_2_27_x86_64.whl (59.5 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 59.5/59.5 MB 329.3 MB/s  0:00:00
+Downloading nvidia_cusolver-12.0.4.66-py3-none-manylinux_2_27_x86_64.whl (200.9 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 200.9/200.9 MB 325.4 MB/s  0:00:00
+Downloading nvidia_cusparse-12.6.3.3-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (145.9 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 145.9/145.9 MB 353.6 MB/s  0:00:00
+Downloading nvidia_nvjitlink-13.3.33-py3-none-manylinux2010_x86_64.manylinux_2_12_x86_64.whl (40.7 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 40.7/40.7 MB 339.2 MB/s  0:00:00
+Downloading nvidia_nvtx-13.0.85-py3-none-manylinux1_x86_64.manylinux_2_5_x86_64.whl (148 kB)
+Downloading cuda_pathfinder-1.6.0-py3-none-any.whl (54 kB)
+Downloading networkx-3.6.1-py3-none-any.whl (2.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.1/2.1 MB 369.4 MB/s  0:00:00
+Downloading sympy-1.14.0-py3-none-any.whl (6.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6.3/6.3 MB 355.9 MB/s  0:00:00
+Downloading mpmath-1.3.0-py3-none-any.whl (536 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 536.2/536.2 kB 178.6 MB/s  0:00:00
+Downloading torchmetrics-1.9.0-py3-none-any.whl (983 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 983.4/983.4 kB 256.4 MB/s  0:00:00
+Downloading lightning_utilities-0.15.3-py3-none-any.whl (31 kB)
+Downloading typer-0.27.0-py3-none-any.whl (122 kB)
+Downloading annotated_doc-0.0.4-py3-none-any.whl (5.3 kB)
+Downloading shellingham-1.5.4-py2.py3-none-any.whl (9.8 kB)
+Installing collected packages: nvidia-cusparselt-cu13, mpmath, cuda-toolkit, triton, sympy, shellingham, nvidia-nvtx, nvidia-nvshmem-cu13, nvidia-nvjitlink, nvidia-nccl-cu13, nvidia-curand, nvidia-cufile, nvidia-cuda-runtime, nvidia-cuda-nvrtc, nvidia-cuda-cupti, networkx, mdurl, lightning-utilities, graphviz, cuda-pathfinder, anytree, annotated-doc, nvidia-cusparse, nvidia-cufft, nvidia-cublas, markdown-it-py, cuda-bindings, rich, nvidia-cusolver, nvidia-cudnn-cu13, typer, torch, torchmetrics, hierarchicalsoftmax
+
+Successfully installed annotated-doc-0.0.4 anytree-2.13.0 cuda-bindings-13.3.1 cuda-pathfinder-1.6.0 cuda-toolkit-13.0.3.0 graphviz-0.21 hierarchicalsoftmax-1.4.4 lightning-utilities-0.15.3 markdown-it-py-4.2.0 mdurl-0.1.2 mpmath-1.3.0 networkx-3.6.1 nvidia-cublas-13.1.1.3 nvidia-cuda-cupti-13.0.85 nvidia-cuda-nvrtc-13.0.88 nvidia-cuda-runtime-13.0.96 nvidia-cudnn-cu13-9.20.0.48 nvidia-cufft-12.0.0.61 nvidia-cufile-1.15.1.6 nvidia-curand-10.4.0.35 nvidia-cusolver-12.0.4.66 nvidia-cusparse-12.6.3.3 nvidia-cusparselt-cu13-0.8.1 nvidia-nccl-cu13-2.29.7 nvidia-nvjitlink-13.3.33 nvidia-nvshmem-cu13-3.4.5 nvidia-nvtx-13.0.85 rich-15.0.0 shellingham-1.5.4 sympy-1.14.0 torch-2.13.0 torchmetrics-1.9.0 triton-3.7.1 typer-0.27.0
+Defaulting to user installation because normal site-packages is not writeable
+Collecting torch==2.10.0
+  Downloading torch-2.10.0-3-cp312-cp312-manylinux_2_28_x86_64.whl.metadata (31 kB)
+Requirement already satisfied: filelock in /opt/conda/envs/transformers/lib/python3.12/site-packages (from torch==2.10.0) (3.20.3)
+Requirement already satisfied: typing-extensions>=4.10.0 in /opt/conda/envs/transformers/lib/python3.12/site-packages (from torch==2.10.0) (4.15.0)
+Requirement already satisfied: setuptools in /opt/conda/envs/transformers/lib/python3.12/site-packages (from torch==2.10.0) (80.10.2)
+Requirement already satisfied: sympy>=1.13.3 in /home/svaren/.local/lib/python3.12/site-packages (from torch==2.10.0) (1.14.0)
+Requirement already satisfied: networkx>=2.5.1 in /home/svaren/.local/lib/python3.12/site-packages (from torch==2.10.0) (3.6.1)
+Requirement already satisfied: jinja2 in /opt/conda/envs/transformers/lib/python3.12/site-packages (from torch==2.10.0) (3.1.6)
+Requirement already satisfied: fsspec>=0.8.5 in /opt/conda/envs/transformers/lib/python3.12/site-packages (from torch==2.10.0) (2025.10.0)
+Collecting cuda-bindings==12.9.4 (from torch==2.10.0)
+  Downloading cuda_bindings-12.9.4-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl.metadata (2.6 kB)
+Collecting nvidia-cuda-nvrtc-cu12==12.8.93 (from torch==2.10.0)
+  Downloading nvidia_cuda_nvrtc_cu12-12.8.93-py3-none-manylinux2010_x86_64.manylinux_2_12_x86_64.whl.metadata (1.7 kB)
+Collecting nvidia-cuda-runtime-cu12==12.8.90 (from torch==2.10.0)
+  Downloading nvidia_cuda_runtime_cu12-12.8.90-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (1.7 kB)
+Collecting nvidia-cuda-cupti-cu12==12.8.90 (from torch==2.10.0)
+  Downloading nvidia_cuda_cupti_cu12-12.8.90-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (1.7 kB)
+Collecting nvidia-cudnn-cu12==9.10.2.21 (from torch==2.10.0)
+  Downloading nvidia_cudnn_cu12-9.10.2.21-py3-none-manylinux_2_27_x86_64.whl.metadata (1.8 kB)
+Collecting nvidia-cublas-cu12==12.8.4.1 (from torch==2.10.0)
+  Downloading nvidia_cublas_cu12-12.8.4.1-py3-none-manylinux_2_27_x86_64.whl.metadata (1.7 kB)
+Collecting nvidia-cufft-cu12==11.3.3.83 (from torch==2.10.0)
+  Downloading nvidia_cufft_cu12-11.3.3.83-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (1.7 kB)
+Collecting nvidia-curand-cu12==10.3.9.90 (from torch==2.10.0)
+  Downloading nvidia_curand_cu12-10.3.9.90-py3-none-manylinux_2_27_x86_64.whl.metadata (1.7 kB)
+Collecting nvidia-cusolver-cu12==11.7.3.90 (from torch==2.10.0)
+  Downloading nvidia_cusolver_cu12-11.7.3.90-py3-none-manylinux_2_27_x86_64.whl.metadata (1.8 kB)
+Collecting nvidia-cusparse-cu12==12.5.8.93 (from torch==2.10.0)
+  Downloading nvidia_cusparse_cu12-12.5.8.93-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (1.8 kB)
+Collecting nvidia-cusparselt-cu12==0.7.1 (from torch==2.10.0)
+  Downloading nvidia_cusparselt_cu12-0.7.1-py3-none-manylinux2014_x86_64.whl.metadata (7.0 kB)
+Collecting nvidia-nccl-cu12==2.27.5 (from torch==2.10.0)
+  Downloading nvidia_nccl_cu12-2.27.5-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (2.0 kB)
+Collecting nvidia-nvshmem-cu12==3.4.5 (from torch==2.10.0)
+  Downloading nvidia_nvshmem_cu12-3.4.5-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (2.1 kB)
+Collecting nvidia-nvtx-cu12==12.8.90 (from torch==2.10.0)
+  Downloading nvidia_nvtx_cu12-12.8.90-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (1.8 kB)
+Collecting nvidia-nvjitlink-cu12==12.8.93 (from torch==2.10.0)
+  Downloading nvidia_nvjitlink_cu12-12.8.93-py3-none-manylinux2010_x86_64.manylinux_2_12_x86_64.whl.metadata (1.7 kB)
+Collecting nvidia-cufile-cu12==1.13.1.3 (from torch==2.10.0)
+  Downloading nvidia_cufile_cu12-1.13.1.3-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (1.7 kB)
+Collecting triton==3.6.0 (from torch==2.10.0)
+  Downloading triton-3.6.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (1.7 kB)
+Requirement already satisfied: cuda-pathfinder~=1.1 in /home/svaren/.local/lib/python3.12/site-packages (from cuda-bindings==12.9.4->torch==2.10.0) (1.6.0)
+Requirement already satisfied: mpmath<1.4,>=1.1.0 in /home/svaren/.local/lib/python3.12/site-packages (from sympy>=1.13.3->torch==2.10.0) (1.3.0)
+Requirement already satisfied: MarkupSafe>=2.0 in /opt/conda/envs/transformers/lib/python3.12/site-packages (from jinja2->torch==2.10.0) (3.0.2)
+Downloading torch-2.10.0-3-cp312-cp312-manylinux_2_28_x86_64.whl (915.6 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 915.6/915.6 MB 149.6 MB/s  0:00:04
+Downloading cuda_bindings-12.9.4-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl (12.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 12.2/12.2 MB 196.5 MB/s  0:00:00
+Downloading nvidia_cublas_cu12-12.8.4.1-py3-none-manylinux_2_27_x86_64.whl (594.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 594.3/594.3 MB 168.6 MB/s  0:00:02
+Downloading nvidia_cuda_cupti_cu12-12.8.90-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (10.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.2/10.2 MB 211.9 MB/s  0:00:00
+Downloading nvidia_cuda_nvrtc_cu12-12.8.93-py3-none-manylinux2010_x86_64.manylinux_2_12_x86_64.whl (88.0 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 88.0/88.0 MB 205.2 MB/s  0:00:00
+Downloading nvidia_cuda_runtime_cu12-12.8.90-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (954 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 954.8/954.8 kB 146.3 MB/s  0:00:00
+Downloading nvidia_cudnn_cu12-9.10.2.21-py3-none-manylinux_2_27_x86_64.whl (706.8 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 706.8/706.8 MB 170.0 MB/s  0:00:03
+Downloading nvidia_cufft_cu12-11.3.3.83-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (193.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 193.1/193.1 MB 228.6 MB/s  0:00:00
+Downloading nvidia_cufile_cu12-1.13.1.3-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (1.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.2/1.2 MB 294.1 MB/s  0:00:00
+Downloading nvidia_curand_cu12-10.3.9.90-py3-none-manylinux_2_27_x86_64.whl (63.6 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 63.6/63.6 MB 247.4 MB/s  0:00:00
+Downloading nvidia_cusolver_cu12-11.7.3.90-py3-none-manylinux_2_27_x86_64.whl (267.5 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 267.5/267.5 MB 236.5 MB/s  0:00:01
+Downloading nvidia_cusparse_cu12-12.5.8.93-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (288.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 288.2/288.2 MB 211.5 MB/s  0:00:01
+Downloading nvidia_cusparselt_cu12-0.7.1-py3-none-manylinux2014_x86_64.whl (287.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 287.2/287.2 MB 207.9 MB/s  0:00:01
+Downloading nvidia_nccl_cu12-2.27.5-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (322.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 322.3/322.3 MB 169.9 MB/s  0:00:01
+Downloading nvidia_nvjitlink_cu12-12.8.93-py3-none-manylinux2010_x86_64.manylinux_2_12_x86_64.whl (39.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 39.3/39.3 MB 205.6 MB/s  0:00:00
+Downloading nvidia_nvshmem_cu12-3.4.5-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (139.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 139.1/139.1 MB 181.0 MB/s  0:00:00
+Downloading nvidia_nvtx_cu12-12.8.90-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (89 kB)
+Downloading triton-3.6.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (188.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 188.3/188.3 MB 190.9 MB/s  0:00:00
+Installing collected packages: nvidia-cusparselt-cu12, triton, nvidia-nvtx-cu12, nvidia-nvshmem-cu12, nvidia-nvjitlink-cu12, nvidia-nccl-cu12, nvidia-curand-cu12, nvidia-cufile-cu12, nvidia-cuda-runtime-cu12, nvidia-cuda-nvrtc-cu12, nvidia-cuda-cupti-cu12, nvidia-cublas-cu12, cuda-bindings, nvidia-cusparse-cu12, nvidia-cufft-cu12, nvidia-cudnn-cu12, nvidia-cusolver-cu12, torch
+  Attempting uninstall: triton
+    Found existing installation: triton 3.7.1
+    Uninstalling triton-3.7.1:
+      Successfully uninstalled triton-3.7.1
+  Attempting uninstall: cuda-bindings
+    Found existing installation: cuda-bindings 13.3.1
+    Uninstalling cuda-bindings-13.3.1:
+      Successfully uninstalled cuda-bindings-13.3.1
+  Attempting uninstall: torch
+    Found existing installation: torch 2.13.0
+    Uninstalling torch-2.13.0:
+      Successfully uninstalled torch-2.13.0
+
+Successfully installed cuda-bindings-12.9.4 nvidia-cublas-cu12-12.8.4.1 nvidia-cuda-cupti-cu12-12.8.90 nvidia-cuda-nvrtc-cu12-12.8.93 nvidia-cuda-runtime-cu12-12.8.90 nvidia-cudnn-cu12-9.10.2.21 nvidia-cufft-cu12-11.3.3.83 nvidia-cufile-cu12-1.13.1.3 nvidia-curand-cu12-10.3.9.90 nvidia-cusolver-cu12-11.7.3.90 nvidia-cusparse-cu12-12.5.8.93 nvidia-cusparselt-cu12-0.7.1 nvidia-nccl-cu12-2.27.5 nvidia-nvjitlink-cu12-12.8.93 nvidia-nvshmem-cu12-3.4.5 nvidia-nvtx-cu12-12.8.90 torch-2.10.0 triton-3.6.0
+Defaulting to user installation because normal site-packages is not writeable
+Collecting accelerate
+  Downloading accelerate-1.14.0-py3-none-any.whl.metadata (19 kB)
+Requirement already satisfied: numpy>=1.17 in /opt/conda/envs/transformers/lib/python3.12/site-packages (from accelerate) (1.26.4)
+Requirement already satisfied: packaging>=20.0 in /opt/conda/envs/transformers/lib/python3.12/site-packages (from accelerate) (25.0)
+Requirement already satisfied: psutil in /opt/conda/envs/transformers/lib/python3.12/site-packages (from accelerate) (7.0.0)
+Requirement already satisfied: pyyaml in /opt/conda/envs/transformers/lib/python3.12/site-packages (from accelerate) (6.0.3)
+Requirement already satisfied: torch>=2.0.0 in /home/svaren/.local/lib/python3.12/site-packages (from accelerate) (2.10.0)
+Requirement already satisfied: huggingface_hub>=0.21.0 in /opt/conda/envs/transformers/lib/python3.12/site-packages (from accelerate) (0.34.4)
+Requirement already satisfied: safetensors>=0.4.3 in /opt/conda/envs/transformers/lib/python3.12/site-packages (from accelerate) (0.6.2)
+Requirement already satisfied: filelock in /opt/conda/envs/transformers/lib/python3.12/site-packages (from huggingface_hub>=0.21.0->accelerate) (3.20.3)
+Requirement already satisfied: fsspec>=2023.5.0 in /opt/conda/envs/transformers/lib/python3.12/site-packages (from huggingface_hub>=0.21.0->accelerate) (2025.10.0)
+Requirement already satisfied: hf-xet<2.0.0,>=1.1.3 in /opt/conda/envs/transformers/lib/python3.12/site-packages (from huggingface_hub>=0.21.0->accelerate) (1.2.0)
+Requirement already satisfied: requests in /opt/conda/envs/transformers/lib/python3.12/site-packages (from huggingface_hub>=0.21.0->accelerate) (2.32.5)
+Requirement already satisfied: tqdm>=4.42.1 in /opt/conda/envs/transformers/lib/python3.12/site-packages (from huggingface_hub>=0.21.0->accelerate) (4.67.1)
+Requirement already satisfied: typing-extensions>=3.7.4.3 in /opt/conda/envs/transformers/lib/python3.12/site-packages (from huggingface_hub>=0.21.0->accelerate) (4.15.0)
+Requirement already satisfied: setuptools in /opt/conda/envs/transformers/lib/python3.12/site-packages (from torch>=2.0.0->accelerate) (80.10.2)
+Requirement already satisfied: sympy>=1.13.3 in /home/svaren/.local/lib/python3.12/site-packages (from torch>=2.0.0->accelerate) (1.14.0)
+Requirement already satisfied: networkx>=2.5.1 in /home/svaren/.local/lib/python3.12/site-packages (from torch>=2.0.0->accelerate) (3.6.1)
+Requirement already satisfied: jinja2 in /opt/conda/envs/transformers/lib/python3.12/site-packages (from torch>=2.0.0->accelerate) (3.1.6)
+Requirement already satisfied: cuda-bindings==12.9.4 in /home/svaren/.local/lib/python3.12/site-packages (from torch>=2.0.0->accelerate) (12.9.4)
+Requirement already satisfied: nvidia-cuda-nvrtc-cu12==12.8.93 in /home/svaren/.local/lib/python3.12/site-packages (from torch>=2.0.0->accelerate) (12.8.93)
+Requirement already satisfied: nvidia-cuda-runtime-cu12==12.8.90 in /home/svaren/.local/lib/python3.12/site-packages (from torch>=2.0.0->accelerate) (12.8.90)
+Requirement already satisfied: nvidia-cuda-cupti-cu12==12.8.90 in /home/svaren/.local/lib/python3.12/site-packages (from torch>=2.0.0->accelerate) (12.8.90)
+Requirement already satisfied: nvidia-cudnn-cu12==9.10.2.21 in /home/svaren/.local/lib/python3.12/site-packages (from torch>=2.0.0->accelerate) (9.10.2.21)
+Requirement already satisfied: nvidia-cublas-cu12==12.8.4.1 in /home/svaren/.local/lib/python3.12/site-packages (from torch>=2.0.0->accelerate) (12.8.4.1)
+Requirement already satisfied: nvidia-cufft-cu12==11.3.3.83 in /home/svaren/.local/lib/python3.12/site-packages (from torch>=2.0.0->accelerate) (11.3.3.83)
+Requirement already satisfied: nvidia-curand-cu12==10.3.9.90 in /home/svaren/.local/lib/python3.12/site-packages (from torch>=2.0.0->accelerate) (10.3.9.90)
+Requirement already satisfied: nvidia-cusolver-cu12==11.7.3.90 in /home/svaren/.local/lib/python3.12/site-packages (from torch>=2.0.0->accelerate) (11.7.3.90)
+Requirement already satisfied: nvidia-cusparse-cu12==12.5.8.93 in /home/svaren/.local/lib/python3.12/site-packages (from torch>=2.0.0->accelerate) (12.5.8.93)
+Requirement already satisfied: nvidia-cusparselt-cu12==0.7.1 in /home/svaren/.local/lib/python3.12/site-packages (from torch>=2.0.0->accelerate) (0.7.1)
+Requirement already satisfied: nvidia-nccl-cu12==2.27.5 in /home/svaren/.local/lib/python3.12/site-packages (from torch>=2.0.0->accelerate) (2.27.5)
+Requirement already satisfied: nvidia-nvshmem-cu12==3.4.5 in /home/svaren/.local/lib/python3.12/site-packages (from torch>=2.0.0->accelerate) (3.4.5)
+Requirement already satisfied: nvidia-nvtx-cu12==12.8.90 in /home/svaren/.local/lib/python3.12/site-packages (from torch>=2.0.0->accelerate) (12.8.90)
+Requirement already satisfied: nvidia-nvjitlink-cu12==12.8.93 in /home/svaren/.local/lib/python3.12/site-packages (from torch>=2.0.0->accelerate) (12.8.93)
+Requirement already satisfied: nvidia-cufile-cu12==1.13.1.3 in /home/svaren/.local/lib/python3.12/site-packages (from torch>=2.0.0->accelerate) (1.13.1.3)
+Requirement already satisfied: triton==3.6.0 in /home/svaren/.local/lib/python3.12/site-packages (from torch>=2.0.0->accelerate) (3.6.0)
+Requirement already satisfied: cuda-pathfinder~=1.1 in /home/svaren/.local/lib/python3.12/site-packages (from cuda-bindings==12.9.4->torch>=2.0.0->accelerate) (1.6.0)
+Requirement already satisfied: mpmath<1.4,>=1.1.0 in /home/svaren/.local/lib/python3.12/site-packages (from sympy>=1.13.3->torch>=2.0.0->accelerate) (1.3.0)
+Requirement already satisfied: MarkupSafe>=2.0 in /opt/conda/envs/transformers/lib/python3.12/site-packages (from jinja2->torch>=2.0.0->accelerate) (3.0.2)
+Requirement already satisfied: charset_normalizer<4,>=2 in /opt/conda/envs/transformers/lib/python3.12/site-packages (from requests->huggingface_hub>=0.21.0->accelerate) (3.4.4)
+Requirement already satisfied: idna<4,>=2.5 in /opt/conda/envs/transformers/lib/python3.12/site-packages (from requests->huggingface_hub>=0.21.0->accelerate) (3.11)
+Requirement already satisfied: urllib3<3,>=1.21.1 in /opt/conda/envs/transformers/lib/python3.12/site-packages (from requests->huggingface_hub>=0.21.0->accelerate) (2.6.3)
+Requirement already satisfied: certifi>=2017.4.17 in /opt/conda/envs/transformers/lib/python3.12/site-packages (from requests->huggingface_hub>=0.21.0->accelerate) (2026.1.4)
+Downloading accelerate-1.14.0-py3-none-any.whl (389 kB)
+Installing collected packages: accelerate
+Successfully installed accelerate-1.14.0
+Defaulting to user installation because normal site-packages is not writeable
+Collecting torcheval
+  Downloading torcheval-0.0.7-py3-none-any.whl.metadata (8.6 kB)
+Requirement already satisfied: typing-extensions in /opt/conda/envs/transformers/lib/python3.12/site-packages (from torcheval) (4.15.0)
+Downloading torcheval-0.0.7-py3-none-any.whl (179 kB)
+Installing collected packages: torcheval
+Successfully installed torcheval-0.0.7
+Defaulting to user installation because normal site-packages is not writeable
+Collecting wandb
+  Downloading wandb-0.28.1-py3-none-manylinux_2_28_x86_64.whl.metadata (11 kB)
+Requirement already satisfied: click>=8.2.0 in /opt/conda/envs/transformers/lib/python3.12/site-packages (from wandb) (8.2.1)
+Requirement already satisfied: packaging in /opt/conda/envs/transformers/lib/python3.12/site-packages (from wandb) (25.0)
+Requirement already satisfied: platformdirs in /opt/conda/envs/transformers/lib/python3.12/site-packages (from wandb) (4.5.0)
+Collecting protobuf!=5.28.0,!=5.29.0,<8,>=5 (from wandb)
+  Downloading protobuf-7.35.1-cp310-abi3-manylinux2014_x86_64.whl.metadata (595 bytes)
+Collecting pydantic<3,>=2.6 (from wandb)
+  Downloading pydantic-2.13.4-py3-none-any.whl.metadata (109 kB)
+Requirement already satisfied: pyyaml in /opt/conda/envs/transformers/lib/python3.12/site-packages (from wandb) (6.0.3)
+Requirement already satisfied: requests<3,>=2.0.0 in /opt/conda/envs/transformers/lib/python3.12/site-packages (from wandb) (2.32.5)
+Collecting sentry-sdk>=2.0.0 (from wandb)
+  Downloading sentry_sdk-2.66.1-py3-none-any.whl.metadata (11 kB)
+Requirement already satisfied: typing-extensions<5,>=4.8 in /opt/conda/envs/transformers/lib/python3.12/site-packages (from wandb) (4.15.0)
+Collecting annotated-types>=0.6.0 (from pydantic<3,>=2.6->wandb)
+  Downloading annotated_types-0.8.0-py3-none-any.whl.metadata (15 kB)
+Collecting pydantic-core==2.46.4 (from pydantic<3,>=2.6->wandb)
+  Downloading pydantic_core-2.46.4-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (6.6 kB)
+Collecting typing-inspection>=0.4.2 (from pydantic<3,>=2.6->wandb)
+  Downloading typing_inspection-0.4.2-py3-none-any.whl.metadata (2.6 kB)
+Requirement already satisfied: charset_normalizer<4,>=2 in /opt/conda/envs/transformers/lib/python3.12/site-packages (from requests<3,>=2.0.0->wandb) (3.4.4)
+Requirement already satisfied: idna<4,>=2.5 in /opt/conda/envs/transformers/lib/python3.12/site-packages (from requests<3,>=2.0.0->wandb) (3.11)
+Requirement already satisfied: urllib3<3,>=1.21.1 in /opt/conda/envs/transformers/lib/python3.12/site-packages (from requests<3,>=2.0.0->wandb) (2.6.3)
+Requirement already satisfied: certifi>=2017.4.17 in /opt/conda/envs/transformers/lib/python3.12/site-packages (from requests<3,>=2.0.0->wandb) (2026.1.4)
+Downloading wandb-0.28.1-py3-none-manylinux_2_28_x86_64.whl (26.5 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 26.5/26.5 MB 69.0 MB/s  0:00:00
+Downloading protobuf-7.35.1-cp310-abi3-manylinux2014_x86_64.whl (327 kB)
+Downloading pydantic-2.13.4-py3-none-any.whl (472 kB)
+Downloading pydantic_core-2.46.4-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (2.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.1/2.1 MB 202.4 MB/s  0:00:00
+Downloading annotated_types-0.8.0-py3-none-any.whl (13 kB)
+Downloading sentry_sdk-2.66.1-py3-none-any.whl (505 kB)
+Downloading typing_inspection-0.4.2-py3-none-any.whl (14 kB)
+Installing collected packages: typing-inspection, sentry-sdk, pydantic-core, protobuf, annotated-types, pydantic, wandb
+
+Successfully installed annotated-types-0.8.0 protobuf-7.35.1 pydantic-2.13.4 pydantic-core-2.46.4 sentry-sdk-2.66.1 typing-inspection-0.4.2 wandb-0.28.1
+bhaskargpu4000.chtc.wisc.edu
+Fold: 0
+Fold 0
+  TopoDataset: 3941 samples | L=1024 | k-mers=[4, 8, 14, 20]
+  TopoDataset: 986 samples | L=1024 | k-mers=[4, 8, 14, 20]
+We are using model - HierarchicalLongformerClassifier_Concat
+Loading pretrained MLM weights from /staging/groups/bhaskar_group/zzformer_hash/weights/longformer_mlm_pretraining_reponly_May28.pt
+
+--- MLM → Classifier transfer ---
+  ✓ transferred 93 backbone keys
+  classifier head missing (expected, will be randomly initialized): 8
+      output_head.0.weight
+      output_head.0.bias
+      output_head.1.weight
+      output_head.1.bias
+      output_head.4.weight
+      output_head.4.bias
+      output_head.7.weight
+      output_head.7.bias
+  ⚠️  UNEXPECTED missing keys (32):
+      topology_encoder.encoder.0.weight
+      topology_encoder.encoder.0.bias
+      topology_encoder.encoder.2.weight
+      topology_encoder.encoder.2.bias
+      topology_encoder.encoder.4.weight
+      topology_encoder.encoder.4.bias
+      topology_encoder.proj.weight
+      topology_encoder.proj.bias
+      full_cross_attn.0.cross_attn.in_proj_weight
+      full_cross_attn.0.cross_attn.in_proj_bias
+Backbone frozen for first 3 epochs
+Trainable params before unfreezing backbone: 1,430,964
+[1;34mwandb[0m: 
+[1;34mwandb[0m: 🚀 View run [33mMnTEdb_topo[0m at: [34mhttps://wandb.ai/svaren-uni/zzformer/runs/nlmycsk8[0m
+[1;34mwandb[0m: Find logs at: [1;35m../../../../../../../tmp/wandb/wandb/run-20260726_234953-nlmycsk8/logs[0m
+Fold: 1
+Fold 1
+  TopoDataset: 3941 samples | L=1024 | k-mers=[4, 8, 14, 20]
+  TopoDataset: 986 samples | L=1024 | k-mers=[4, 8, 14, 20]
+We are using model - HierarchicalLongformerClassifier_Concat
+Loading pretrained MLM weights from /staging/groups/bhaskar_group/zzformer_hash/weights/longformer_mlm_pretraining_reponly_May28.pt
+
+--- MLM → Classifier transfer ---
+  ✓ transferred 93 backbone keys
+  classifier head missing (expected, will be randomly initialized): 8
+      output_head.0.weight
+      output_head.0.bias
+      output_head.1.weight
+      output_head.1.bias
+      output_head.4.weight
+      output_head.4.bias
+      output_head.7.weight
+      output_head.7.bias
+  ⚠️  UNEXPECTED missing keys (32):
+      topology_encoder.encoder.0.weight
+      topology_encoder.encoder.0.bias
+      topology_encoder.encoder.2.weight
+      topology_encoder.encoder.2.bias
+      topology_encoder.encoder.4.weight
+      topology_encoder.encoder.4.bias
+      topology_encoder.proj.weight
+      topology_encoder.proj.bias
+      full_cross_attn.0.cross_attn.in_proj_weight
+      full_cross_attn.0.cross_attn.in_proj_bias
+Backbone frozen for first 3 epochs
+Trainable params before unfreezing backbone: 1,430,964
+[1;34mwandb[0m: 
+[1;34mwandb[0m: 🚀 View run [33mMnTEdb_topo[0m at: [34mhttps://wandb.ai/svaren-uni/zzformer/runs/czkib455[0m
+[1;34mwandb[0m: Find logs at: [1;35m../../../../../../../tmp/wandb/wandb/run-20260726_235353-czkib455/logs[0m
