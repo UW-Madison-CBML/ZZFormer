@@ -134,18 +134,18 @@ class BaselineTransformer_Vanilla_MLM(nn.Module):
         mlm_loss = None
         logits = self.sequence_head(h)  # (B,L,V)
 
-        if mlm_labels is not None:
-            # flatten to (B*L, V), (B*L,)
-            logits_flat = logits.view(-1, self.output_vocab_size)
-            labels_flat = mlm_labels.view(-1)
 
-            # compute loss only on masked positions
-            mlm_loss = F.cross_entropy(
-                logits_flat,
-                labels_flat,
-                ignore_index=self.ignore_index,  # ignore non-mask positions
-                reduction="mean"
-            )
+        # flatten to (B*L, V), (B*L,)
+        logits_flat = logits.view(-1, self.output_vocab_size)
+        labels_flat = mlm_labels.view(-1)
+
+        # compute loss only on masked positions
+        mlm_loss = F.cross_entropy(
+            logits_flat,
+            labels_flat,
+            ignore_index=self.ignore_index,  # ignore non-mask positions
+            reduction="mean"
+        )
 
         return mlm_loss,logits
     def get_latent_embeddings(self, batch):
