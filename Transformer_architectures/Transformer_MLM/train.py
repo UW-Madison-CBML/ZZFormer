@@ -13,7 +13,6 @@ import math
 # Assuming these are correctly defined in your local modules
 from model.model import (
     BaselineTransformer_Vanilla_MLM,
-    BaselineTransformer_BERTSTyle_MLM
 )
 from data.dataloader import SequenceDataset_nocollate, SequenceDataset, collate_fn, apply_mlm_mask_gpu
 
@@ -140,33 +139,20 @@ def main(args):
     mask_ignore_token_ids=(vocab["X"], ) # e.g., 'X' token ID to ignore during masking
 
     # ---------------- Model Init ----------------
-    if args.mode == "mlm":
-        model = BaselineTransformer_Vanilla_MLM(
-            src_vocab_size=VOCAB_SIZE,
-            d_model=config["model"]["d_model"],
-            n_heads=config["model"]["nhead"],
-            dim_feedforward=config["model"]["dim_feedforward"],
-            dropout=config["model"]["dropout"],
-            num_layers=config["model"]["num_layers"],
-            positional_encoding=config["model"]["positional_encoding"],
-            max_position_embeddings=config["model"]["max_seq_len"],
-            pad_token_id=PAD_TOKEN,
-            ignore_index=ignore_index
-        )
 
-    elif args.mode == "bert_mlm":
-        model = BaselineTransformer_BERTSTyle_MLM(
-            src_vocab_size=VOCAB_SIZE,
-            d_model=config["model"]["d_model"],
-            n_heads=config["model"]["nhead"],
-            dim_feedforward=config["model"]["dim_feedforward"],
-            dropout=config["model"]["dropout"],
-            num_layers=config["model"]["num_layers"],
-            positional_encoding=config["model"]["positional_encoding"],
-            max_position_embeddings=config["model"]["max_seq_len"],
-            pad_token_id=PAD_TOKEN,
-            ignore_index=ignore_index
-        )
+    model = BaselineTransformer_Vanilla_MLM(
+        src_vocab_size=VOCAB_SIZE,
+        d_model=config["model"]["d_model"],
+        n_heads=config["model"]["nhead"],
+        dim_feedforward=config["model"]["dim_feedforward"],
+        dropout=config["model"]["dropout"],
+        num_layers=config["model"]["num_layers"],
+        positional_encoding=config["model"]["positional_encoding"],
+        max_position_embeddings=config["model"]["max_seq_len"],
+        pad_token_id=PAD_TOKEN,
+        ignore_index=ignore_index
+    )
+
 
     model.to(DEVICE)
 
