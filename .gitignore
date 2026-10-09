@@ -83,3 +83,9 @@ tmp
 *.pth
 *.pb
 .DS_Store
+Longformer
+Transformer_architectures
+final
+Notebooks
+zzformer_levi
+zzformer_topo_mask
